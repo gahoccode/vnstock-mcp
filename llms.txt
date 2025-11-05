@@ -1,0 +1,3 @@
+Python SDK: https://raw.githubusercontent.com/modelcontextprotocol/python-sdk/refs/heads/main/README.md
+Build Client: https://raw.githubusercontent.com/modelcontextprotocol/quickstart-resources/refs/heads/main/mcp-client-python/client.py
+Breakdown Doc on Build Client guide: https://github.com/gahoccode/docs/blob/main/fastmcp/cli/client_1.0.md
