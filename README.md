@@ -17,13 +17,16 @@ The unofficial MCP server that provides all the features of vnstock, allowing yo
 ### 1. Installation
 
 ```bash
-# Clone or navigate to your vnstock-mcp directory
+# Install from PyPI (recommended)
+uvx vnstock-mcp
+
+# Or clone and install from source
 cd vnstock-mcp
 
 # Install uv if you don't have it
 pip install uv
 
-# Install dependencies with uv (recommended)
+# Install dependencies with uv
 uv sync
 
 # Or install with pip (legacy method)
@@ -67,6 +70,31 @@ vnstock-mcp/
 
 To use this MCP server with Claude Desktop, add the following configuration to your Claude Desktop config file (`~/Library/Application Support/Claude/claude_desktop_config.json` on macOS):
 
+**Method 1: Using uvx (if PATH configured)**
+```json
+{
+  "mcpServers": {
+    "vnstock-mcp": {
+      "command": "uvx",
+      "args": ["vnstock-mcp"]
+    }
+  }
+}
+```
+
+**Method 2: Using uvx (if PATH NOT configured)**
+```json
+{
+  "mcpServers": {
+    "vnstock-mcp": {
+      "command": "/Users/YOUR_USERNAME/.local/bin/uvx",
+      "args": ["vnstock-mcp"]
+    }
+  }
+}
+```
+
+**Method 3: Development from source**
 ```json
 {
   "mcpServers": {
@@ -83,7 +111,20 @@ To use this MCP server with Claude Desktop, add the following configuration to y
 }
 ```
 
-**Note:** Replace `/ABSOLUTE/PATH/TO/vnstock-mcp` with the actual absolute path to your project directory.
+**Note:**
+- Replace `YOUR_USERNAME` with your actual username in Method 2
+- Replace `/ABSOLUTE/PATH/TO/vnstock-mcp` with the actual absolute path to your project directory in Method 3
+- After quitting and restarting Claude Desktop, if it still can't detect the mcp server, check if `uvx` is in your PATH. If not, add `~/.local/bin` to your PATH:
+
+```bash
+# For zsh (macOS default)
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+
+# For bash
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+```
 
 ## License
 
