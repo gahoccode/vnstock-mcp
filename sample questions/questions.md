@@ -31,43 +31,6 @@ Retrieve VNINDEX data for 2024
 Show me HNXINDEX from January to December 2024
 ```
 
-## Portfolio Optimization
-
-### Calculate Returns
-```
-Calculate expected returns for a portfolio with VCI, VNM, and HPG stocks from 2024-01-01 to 2024-12-31
-```
-
-```
-Get exponential moving average returns for ACB, FPT, and MBB using log returns
-```
-
-### Optimize Portfolio
-```
-Find the optimal portfolio weights for VCI, VNM, HPG to maximize Sharpe ratio
-```
-
-```
-Optimize a portfolio of banking stocks (ACB, MBB, VCB) with 3% risk-free rate
-```
-
-```
-Run portfolio optimization using Ledoit-Wolf shrinkage for covariance matrix
-```
-
-### Full Portfolio Analysis
-```
-Perform comprehensive portfolio optimization for VCI, VNM, HPG with all strategies
-```
-
-```
-Compare max Sharpe, min volatility, and max utility portfolios for tech stocks
-```
-
-```
-Analyze optimal portfolios for ACB, MBB, VCB with different risk aversion levels
-```
-
 ## Fetch Financial Statements
 ```
 Get the annual income statement for VCI stock
