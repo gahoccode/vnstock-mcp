@@ -16,31 +16,37 @@ The unofficial MCP server that provides all the features of vnstock, allowing yo
 
 ### 1. Installation
 
+**For End Users (Recommended)**
 ```bash
-# Install from PyPI (recommended)
+# Install from PyPI and run directly
 uvx vnstock-mcp
+```
 
-# Or clone and install from source
+**For Developers**
+```bash
+# Clone the repository
+git clone https://github.com/gahoccode/vnstock-mcp.git
 cd vnstock-mcp
 
 # Install uv if you don't have it
-pip install uv
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Install dependencies with uv
+# Install dependencies
 uv sync
-
-# Or install with pip (legacy method)
-pip install -e .
 ```
 
 ### 2. Run the Server
 
+**End Users (uvx method)**
 ```bash
-# Start the MCP server (recommended with uv)
-uv run python server.py
+# Run directly from PyPI
+uvx vnstock-mcp
+```
 
-# Or with python directly
-python server.py
+**Developers (local development)**
+```bash
+# Run from source
+uv run python src/vnstock_mcp/server.py
 ```
 
 ## Usage Examples
@@ -58,13 +64,41 @@ python server.py
 ```
 vnstock-mcp/
 ├── pyproject.toml          # Project configuration and dependencies
-├── server.py               # Main MCP server
-├── client.py               # CLI client (if exists)
+├── src/
+│   └── vnstock_mcp/        # Python package
+│       ├── __init__.py     # Package initialization
+│       └── server.py       # Main MCP server
 ├── tests/                  # Test suite
-├── .venv/                  # uv-managed virtual environment
+│   ├── __init__.py
+│   └── conftest.py         # Pytest configuration
+├── dist/                   # Built packages
+│   ├── vnstock_mcp-0.1.0-py3-none-any.whl
+│   └── vnstock_mcp-0.1.0.tar.gz
+├── sample questions/       # Usage examples
+│   └── questions.md
 ├── uv.lock                 # Dependency lock file
 └── README.md               # This file
 ```
+
+## uv vs uvx: Which to Use?
+
+### **uvx (Recommended for Users)**
+- **Purpose**: Run Python packages directly from PyPI
+- **Use case**: End users who just want to use the MCP server
+- **Command**: `uvx vnstock-mcp`
+- **Benefits**:
+  - No local setup required
+  - Automatic dependency management
+  - Isolated execution environment
+
+### **uv (Recommended for Developers)**
+- **Purpose**: Python project and package management
+- **Use case**: Developers who want to modify/contribute to the code
+- **Command**: `uv run python src/vnstock_mcp/server.py`
+- **Benefits**:
+  - Full source code access
+  - Development workflow
+  - Ability to make changes
 
 ## Claude Desktop Integration
 
@@ -102,7 +136,7 @@ To use this MCP server with Claude Desktop, add the following configuration to y
       "command": "uv",
       "args": [
         "--directory",
-        "/ABSOLUTE/PATH/TO/vnstock-mcp",
+        "/Users/USERNAME/PATH_TO/src/vnstock_mcp",
         "run",
         "server.py"
       ]
@@ -113,7 +147,7 @@ To use this MCP server with Claude Desktop, add the following configuration to y
 
 **Note:**
 - Replace `YOUR_USERNAME` with your actual username in Method 2
-- Replace `/ABSOLUTE/PATH/TO/vnstock-mcp` with the actual absolute path to your project directory in Method 3
+- Replace `USERNAME` with your actual username in Method 3
 - After quitting and restarting Claude Desktop, if it still can't detect the mcp server, check if `uvx` is in your PATH. If not, add `~/.local/bin` to your PATH:
 
 ```bash
