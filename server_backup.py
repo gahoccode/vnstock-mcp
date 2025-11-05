@@ -187,7 +187,7 @@ def get_income_statement(symbol: str, lang: str = "en") -> str:
             return f"No income statement data found for {symbol}"
 
         # Sort by yearReport for chronological analysis
-        df = df.sort_values('yearReport').reset_index(drop=True)
+        df = df.sort_values("yearReport").reset_index(drop=True)
 
         # Convert to JSON
         return df.to_json(orient="records", date_format="iso", indent=2)
@@ -221,7 +221,7 @@ def get_balance_sheet(symbol: str, lang: str = "en") -> str:
             return f"No balance sheet data found for {symbol}"
 
         # Sort by yearReport for chronological analysis
-        df = df.sort_values('yearReport').reset_index(drop=True)
+        df = df.sort_values("yearReport").reset_index(drop=True)
 
         # Convert to JSON
         return df.to_json(orient="records", date_format="iso", indent=2)
@@ -255,7 +255,7 @@ def get_cash_flow(symbol: str, lang: str = "en") -> str:
             return f"No cash flow data found for {symbol}"
 
         # Sort by yearReport for chronological analysis
-        df = df.sort_values('yearReport').reset_index(drop=True)
+        df = df.sort_values("yearReport").reset_index(drop=True)
 
         # Convert to JSON
         return df.to_json(orient="records", date_format="iso", indent=2)
@@ -294,8 +294,8 @@ def get_financial_ratios(symbol: str, lang: str = "en") -> str:
         )
 
         # Sort flattened DataFrame by yearReport for chronological analysis
-        if 'yearReport' in flattened_df.columns:
-            flattened_df = flattened_df.sort_values('yearReport').reset_index(drop=True)
+        if "yearReport" in flattened_df.columns:
+            flattened_df = flattened_df.sort_values("yearReport").reset_index(drop=True)
 
         # Convert to JSON
         return flattened_df.to_json(orient="records", date_format="iso", indent=2)

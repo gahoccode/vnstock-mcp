@@ -1,25 +1,11 @@
 [project]
 name = "vnstock-mcp"
-version = "2.0.0"
+version = "0.1.0"
 description = "Vietnamese Stock Market MCP Server - FastMCP 2.0"
 readme = "README.md"
-license = {text = "MIT"}
-authors = [
-    {name = "tamle", email = "tamle@example.com"}
-]
-classifiers = [
-    "Development Status :: 4 - Beta",
-    "Intended Audience :: Financial and Insurance Industry",
-    "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-    "Topic :: Office/Business :: Financial :: Investment",
-    "Topic :: Software Development :: Libraries :: Python Modules",
-]
-keywords = ["vietnam", "stock", "market", "mcp", "fastmcp", "financial", "portfolio"]
+license = "MIT"
+
+keywords = ["vietnam", "stock", "market", "mcp", "fastmcp", "financial", "vnstock"]
 requires-python = ">=3.10"
 
 dependencies = [
@@ -33,55 +19,28 @@ dependencies = [
 ]
 
 
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project.scripts]
+vnstock-mcp = "vnstock_mcp.server:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["vnstock_mcp*"]
+
+
 [project.urls]
-Homepage = "https://github.com/tamle/vnstock-mcp"
-Repository = "https://github.com/tamle/vnstock-mcp"
-Documentation = "https://github.com/tamle/vnstock-mcp#readme"
-"Bug Tracker" = "https://github.com/tamle/vnstock-mcp/issues"
+Repository = "https://github.com/gahoccode/vnstock-mcp"
 
 
-[tool.black]
-line-length = 88
-target-version = ['py310']
-include = '\.pyi?$'
-extend-exclude = '''
-/(
-  # directories
-  \.eggs
-  | \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | build
-  | dist
-)/
-'''
-
-[tool.isort]
-profile = "black"
-multi_line_output = 3
-line_length = 88
-known_first_party = ["vnstock_mcp"]
-
-[tool.mypy]
-python_version = "3.10"
-warn_return_any = true
-warn_unused_configs = true
-disallow_untyped_defs = true
-disallow_incomplete_defs = true
-check_untyped_defs = true
-disallow_untyped_decorators = true
-no_implicit_optional = true
-warn_redundant_casts = true
-warn_unused_ignores = true
-warn_no_return = true
-warn_unreachable = true
-strict_equality = true
 
 [tool.ruff]
 target-version = "py310"
 line-length = 88
+
+[tool.ruff.lint]
 select = [
     "E",  # pycodestyle errors
     "W",  # pycodestyle warnings
@@ -92,19 +51,13 @@ select = [
     "UP", # pyupgrade
 ]
 ignore = [
-    "E501",  # line too long, handled by black
+    "E501",  # line too long, handled by formatter
     "B008",  # do not perform function calls in argument defaults
     "C901",  # too complex
 ]
 
 [dependency-groups]
 dev = [
-    "pytest>=7.0.0",
-    "pytest-asyncio>=0.21.0",
-    "pytest-cov>=4.0.0",
-    "black>=22.0.0",
-    "isort>=5.10.0",
-    "mypy>=1.0.0",
     "ruff>=0.1.0",
 ]
 

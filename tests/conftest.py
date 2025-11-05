@@ -22,7 +22,4 @@ async def sample_symbols():
 @pytest.fixture
 async def sample_dates():
     """Sample date range for testing."""
-    return {
-        "start_date": "2024-01-01",
-        "end_date": "2024-01-31"
-    }
+    return {"start_date": "2024-01-01", "end_date": "2024-01-31"}

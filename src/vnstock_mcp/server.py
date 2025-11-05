@@ -43,7 +43,7 @@ async def get_stock_history(
         # Fetch historical data in executor to avoid blocking
         df = await loop.run_in_executor(
             None,
-            lambda: quote.history(start=start_date, end=end_date, interval=interval)
+            lambda: quote.history(start=start_date, end=end_date, interval=interval),
         )
 
         if df is None or df.empty:
@@ -81,7 +81,7 @@ async def get_forex_history(
         # Fetch historical data in executor to avoid blocking
         df = await loop.run_in_executor(
             None,
-            lambda: fx.quote.history(start=start_date, end=end_date, interval=interval)
+            lambda: fx.quote.history(start=start_date, end=end_date, interval=interval),
         )
 
         if df is None or df.empty:
@@ -120,7 +120,9 @@ async def get_crypto_history(
         # Fetch historical data in executor to avoid blocking
         df = await loop.run_in_executor(
             None,
-            lambda: crypto.quote.history(start=start_date, end=end_date, interval=interval)
+            lambda: crypto.quote.history(
+                start=start_date, end=end_date, interval=interval
+            ),
         )
 
         if df is None or df.empty:
@@ -163,14 +165,18 @@ async def get_index_history(
             quote = Quote(symbol=symbol, source="VCI")
             df = await loop.run_in_executor(
                 None,
-                lambda: quote.history(start=start_date, end=end_date, interval=interval)
+                lambda: quote.history(
+                    start=start_date, end=end_date, interval=interval
+                ),
             )
         else:
             # Use MSN source for international indices
             index = Vnstock().world_index(symbol=symbol, source="MSN")
             df = await loop.run_in_executor(
                 None,
-                lambda: index.quote.history(start=start_date, end=end_date, interval=interval)
+                lambda: index.quote.history(
+                    start=start_date, end=end_date, interval=interval
+                ),
             )
 
         if df is None or df.empty:
@@ -206,15 +212,14 @@ async def get_income_statement(symbol: str, lang: str = "en") -> str:
 
         # Fetch annual income statement in executor to avoid blocking
         df = await loop.run_in_executor(
-            None,
-            lambda: finance.income_statement(period="year", lang=lang)
+            None, lambda: finance.income_statement(period="year", lang=lang)
         )
 
         if df is None or df.empty:
             return f"No income statement data found for {symbol}"
 
         # Sort by yearReport for chronological analysis
-        df = df.sort_values('yearReport').reset_index(drop=True)
+        df = df.sort_values("yearReport").reset_index(drop=True)
 
         # Convert to JSON
         return df.to_json(orient="records", date_format="iso", indent=2)
@@ -245,15 +250,14 @@ async def get_balance_sheet(symbol: str, lang: str = "en") -> str:
 
         # Fetch annual balance sheet in executor to avoid blocking
         df = await loop.run_in_executor(
-            None,
-            lambda: finance.balance_sheet(period="year", lang=lang)
+            None, lambda: finance.balance_sheet(period="year", lang=lang)
         )
 
         if df is None or df.empty:
             return f"No balance sheet data found for {symbol}"
 
         # Sort by yearReport for chronological analysis
-        df = df.sort_values('yearReport').reset_index(drop=True)
+        df = df.sort_values("yearReport").reset_index(drop=True)
 
         # Convert to JSON
         return df.to_json(orient="records", date_format="iso", indent=2)
@@ -284,15 +288,14 @@ async def get_cash_flow(symbol: str, lang: str = "en") -> str:
 
         # Fetch annual cash flow statement in executor to avoid blocking
         df = await loop.run_in_executor(
-            None,
-            lambda: finance.cash_flow(period="year", lang=lang)
+            None, lambda: finance.cash_flow(period="year", lang=lang)
         )
 
         if df is None or df.empty:
             return f"No cash flow data found for {symbol}"
 
         # Sort by yearReport for chronological analysis
-        df = df.sort_values('yearReport').reset_index(drop=True)
+        df = df.sort_values("yearReport").reset_index(drop=True)
 
         # Convert to JSON
         return df.to_json(orient="records", date_format="iso", indent=2)
@@ -323,8 +326,7 @@ async def get_financial_ratios(symbol: str, lang: str = "en") -> str:
 
         # Fetch annual financial ratios in executor to avoid blocking
         df = await loop.run_in_executor(
-            None,
-            lambda: finance.ratio(period="year", lang=lang)
+            None, lambda: finance.ratio(period="year", lang=lang)
         )
 
         if df is None or df.empty:
@@ -335,12 +337,12 @@ async def get_financial_ratios(symbol: str, lang: str = "en") -> str:
             None,
             lambda: flatten_hierarchical_index(
                 df, separator="_", handle_duplicates=True, drop_levels=0
-            )
+            ),
         )
 
         # Sort flattened DataFrame by yearReport for chronological analysis
-        if 'yearReport' in flattened_df.columns:
-            flattened_df = flattened_df.sort_values('yearReport').reset_index(drop=True)
+        if "yearReport" in flattened_df.columns:
+            flattened_df = flattened_df.sort_values("yearReport").reset_index(drop=True)
 
         # Convert to JSON
         return flattened_df.to_json(orient="records", date_format="iso", indent=2)
@@ -369,10 +371,7 @@ async def get_dividend_history(symbol: str) -> str:
         company = stock.company
 
         # Fetch dividend history in executor to avoid blocking
-        df = await loop.run_in_executor(
-            None,
-            lambda: company.dividends()
-        )
+        df = await loop.run_in_executor(None, lambda: company.dividends())
 
         if df is None or df.empty:
             return f"No dividend data found for {symbol}"
@@ -400,10 +399,7 @@ async def get_sjc_gold_price(date: str = None) -> str:
         loop = asyncio.get_event_loop()
 
         # Fetch SJC gold prices in executor to avoid blocking
-        df = await loop.run_in_executor(
-            None,
-            lambda: sjc_gold_price(date=date)
-        )
+        df = await loop.run_in_executor(None, lambda: sjc_gold_price(date=date))
 
         if df is None or df.empty:
             date_str = date if date else "current date"
@@ -429,10 +425,7 @@ async def get_btmc_gold_price() -> str:
         loop = asyncio.get_event_loop()
 
         # Fetch BTMC gold prices in executor to avoid blocking
-        df = await loop.run_in_executor(
-            None,
-            lambda: btmc_goldprice()
-        )
+        df = await loop.run_in_executor(None, lambda: btmc_goldprice())
 
         if df is None or df.empty:
             return "No BTMC gold price data found"
@@ -460,10 +453,7 @@ async def get_vcb_exchange_rate(date: str) -> str:
         loop = asyncio.get_event_loop()
 
         # Fetch VCB exchange rates in executor to avoid blocking
-        df = await loop.run_in_executor(
-            None,
-            lambda: vcb_exchange_rate(date=date)
-        )
+        df = await loop.run_in_executor(None, lambda: vcb_exchange_rate(date=date))
 
         if df is None or df.empty:
             return f"No VCB exchange rate data found for {date}"
@@ -476,7 +466,9 @@ async def get_vcb_exchange_rate(date: str) -> str:
 
 
 @mcp.tool()
-async def get_company_info(symbol: str, info_type: str = "overview", lang: str = "en") -> str:
+async def get_company_info(
+    symbol: str, info_type: str = "overview", lang: str = "en"
+) -> str:
     """
     Get company information for Vietnamese stocks.
 
@@ -511,10 +503,14 @@ async def get_company_info(symbol: str, info_type: str = "overview", lang: str =
             df = await loop.run_in_executor(None, lambda: company.shareholders())
         elif info_type == "officers":
             # Default to working officers, can be extended to accept filter parameter
-            df = await loop.run_in_executor(None, lambda: company.officers(filter_by="working"))
+            df = await loop.run_in_executor(
+                None, lambda: company.officers(filter_by="working")
+            )
         elif info_type == "subsidiaries":
             # Default to all subsidiaries and associated companies
-            df = await loop.run_in_executor(None, lambda: company.subsidiaries(filter_by="all"))
+            df = await loop.run_in_executor(
+                None, lambda: company.subsidiaries(filter_by="all")
+            )
         elif info_type == "events":
             df = await loop.run_in_executor(None, lambda: company.events())
         elif info_type == "news":
@@ -557,10 +553,7 @@ async def get_fund_listing(fund_type: str = "") -> str:
         loop = asyncio.get_event_loop()
 
         # Fetch fund listing in executor to avoid blocking
-        df = await loop.run_in_executor(
-            None,
-            lambda: fund.listing(fund_type=fund_type)
-        )
+        df = await loop.run_in_executor(None, lambda: fund.listing(fund_type=fund_type))
 
         if df is None or df.empty:
             return f"No funds found for type: {fund_type}"
@@ -587,10 +580,7 @@ async def search_funds(symbol: str) -> str:
         loop = asyncio.get_event_loop()
 
         # Search for funds in executor to avoid blocking
-        df = await loop.run_in_executor(
-            None,
-            lambda: fund.filter(symbol=symbol)
-        )
+        df = await loop.run_in_executor(None, lambda: fund.filter(symbol=symbol))
 
         if df is None or df.empty:
             return f"No funds found matching: {symbol}"
@@ -618,8 +608,7 @@ async def get_fund_nav_report(symbol: str) -> str:
 
         # Fetch NAV report in executor to avoid blocking
         df = await loop.run_in_executor(
-            None,
-            lambda: fund.details.nav_report(symbol=symbol.upper())
+            None, lambda: fund.details.nav_report(symbol=symbol.upper())
         )
 
         if df is None or df.empty:
@@ -649,8 +638,7 @@ async def get_fund_top_holdings(symbol: str) -> str:
 
         # Fetch top holdings in executor to avoid blocking
         df = await loop.run_in_executor(
-            None,
-            lambda: fund.details.top_holding(symbol=symbol.upper())
+            None, lambda: fund.details.top_holding(symbol=symbol.upper())
         )
 
         if df is None or df.empty:
@@ -680,8 +668,7 @@ async def get_fund_industry_allocation(symbol: str) -> str:
 
         # Fetch industry allocation in executor to avoid blocking
         df = await loop.run_in_executor(
-            None,
-            lambda: fund.details.industry_holding(symbol=symbol.upper())
+            None, lambda: fund.details.industry_holding(symbol=symbol.upper())
         )
 
         if df is None or df.empty:
@@ -711,8 +698,7 @@ async def get_fund_asset_allocation(symbol: str) -> str:
 
         # Fetch asset allocation in executor to avoid blocking
         df = await loop.run_in_executor(
-            None,
-            lambda: fund.details.asset_holding(symbol=symbol.upper())
+            None, lambda: fund.details.asset_holding(symbol=symbol.upper())
         )
 
         if df is None or df.empty:
@@ -725,6 +711,11 @@ async def get_fund_asset_allocation(symbol: str) -> str:
         return f"Error fetching asset allocation for {symbol}: {str(e)}"
 
 
-if __name__ == "__main__":
+def main():
+    """Main entry point for the MCP server."""
     # Run server with stdio transport (default)
     mcp.run()
+
+
+if __name__ == "__main__":
+    main()
