@@ -3,8 +3,10 @@ services:
     name: vnstock-mcp-server
     env: python
     plan: free
+    region: singapore
+    rootDir: src/vnstock_mcp
     buildCommand: "uv sync"
-    startCommand: "uv run src/vnstock_mcp/server.py"
+    startCommand: "uv run server.py"
     envVars:
       - key: PORT
         value: 8001
