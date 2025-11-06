@@ -4,7 +4,8 @@ Provides tools to fetch stock, forex, crypto, and index historical data from vns
 """
 
 import os
-from mcp.server.fastmcp import FastMCP
+import asyncio
+from fastmcp import FastMCP
 from vnstock import Vnstock, Quote
 from vnstock.core.utils.transform import flatten_hierarchical_index
 from vnstock.explorer.misc.gold_price import sjc_gold_price, btmc_goldprice
@@ -13,19 +14,18 @@ from vnstock.explorer.fmarket.fund import Fund
 from pypfopt import EfficientFrontier, risk_models, expected_returns
 from pypfopt.exceptions import OptimizationError
 
-# Environment-based configuration
-PORT = int(os.environ.get("PORT", 8080))
-HOST = os.environ.get("MCP_HOST", "0.0.0.0")
+# Get port from environment variable (Render sets this, defaults to 8001 for local dev)
+PORT = int(os.environ.get("PORT", 8001))
 
-# Initialize the MCP server with host and port for HTTP transport
-mcp = FastMCP("vnstock", host=HOST, port=PORT)
+# Initialize FastMCP server with host and port in constructor
+mcp = FastMCP("vnstock", host="0.0.0.0", port=PORT)
 
 # Initialize fund object for mutual fund data
 fund = Fund()
 
 
 @mcp.tool()
-def get_stock_history(
+async def get_stock_history(
     symbol: str, start_date: str, end_date: str, interval: str = "1D"
 ) -> str:
     """
@@ -44,8 +44,12 @@ def get_stock_history(
         # Initialize Quote object with VCI source
         quote = Quote(symbol=symbol, source="VCI")
 
-        # Fetch historical data
-        df = quote.history(start=start_date, end=end_date, interval=interval)
+        # Fetch historical data in executor to avoid blocking
+        loop = asyncio.get_event_loop()
+        df = await loop.run_in_executor(
+            None,
+            lambda: quote.history(start=start_date, end=end_date, interval=interval),
+        )
 
         if df is None or df.empty:
             return f"No data found for {symbol} between {start_date} and {end_date}"
@@ -58,7 +62,7 @@ def get_stock_history(
 
 
 @mcp.tool()
-def get_forex_history(
+async def get_forex_history(
     symbol: str, start_date: str, end_date: str, interval: str = "1D"
 ) -> str:
     """
@@ -77,8 +81,12 @@ def get_forex_history(
         # Initialize Forex using Vnstock wrapper with MSN source
         fx = Vnstock().fx(symbol=symbol, source="MSN")
 
-        # Fetch historical data
-        df = fx.quote.history(start=start_date, end=end_date, interval=interval)
+        # Fetch historical data in executor to avoid blocking
+        loop = asyncio.get_event_loop()
+        df = await loop.run_in_executor(
+            None,
+            lambda: fx.quote.history(start=start_date, end=end_date, interval=interval),
+        )
 
         if df is None or df.empty:
             return (
@@ -92,7 +100,7 @@ def get_forex_history(
 
 
 @mcp.tool()
-def get_crypto_history(
+async def get_crypto_history(
     symbol: str, start_date: str, end_date: str, interval: str = "1D"
 ) -> str:
     """
@@ -111,8 +119,12 @@ def get_crypto_history(
         # Initialize Crypto using Vnstock wrapper with MSN source
         crypto = Vnstock().crypto(symbol=symbol, source="MSN")
 
-        # Fetch historical data
-        df = crypto.quote.history(start=start_date, end=end_date, interval=interval)
+        # Fetch historical data in executor to avoid blocking
+        loop = asyncio.get_event_loop()
+        df = await loop.run_in_executor(
+            None,
+            lambda: crypto.quote.history(start=start_date, end=end_date, interval=interval),
+        )
 
         if df is None or df.empty:
             return (
@@ -126,7 +138,7 @@ def get_crypto_history(
 
 
 @mcp.tool()
-def get_index_history(
+async def get_index_history(
     symbol: str, start_date: str, end_date: str, interval: str = "1D"
 ) -> str:
     """
@@ -150,11 +162,19 @@ def get_index_history(
         if symbol.upper() in vietnam_indices:
             # Use Quote with VCI source for Vietnamese indices
             quote = Quote(symbol=symbol, source="VCI")
-            df = quote.history(start=start_date, end=end_date, interval=interval)
+            loop = asyncio.get_event_loop()
+            df = await loop.run_in_executor(
+                None,
+                lambda: quote.history(start=start_date, end=end_date, interval=interval),
+            )
         else:
             # Use MSN source for international indices
             index = Vnstock().world_index(symbol=symbol, source="MSN")
-            df = index.quote.history(start=start_date, end=end_date, interval=interval)
+            loop = asyncio.get_event_loop()
+            df = await loop.run_in_executor(
+                None,
+                lambda: index.quote.history(start=start_date, end=end_date, interval=interval),
+            )
 
         if df is None or df.empty:
             return (
@@ -168,7 +188,7 @@ def get_index_history(
 
 
 @mcp.tool()
-def get_income_statement(symbol: str, lang: str = "en") -> str:
+async def get_income_statement(symbol: str, lang: str = "en") -> str:
     """
     Get annual income statement (profit & loss) for Vietnamese stocks with chronological year ordering.
 
@@ -185,8 +205,11 @@ def get_income_statement(symbol: str, lang: str = "en") -> str:
         stock = Vnstock().stock(symbol=symbol.upper(), source="VCI")
         finance = stock.finance
 
-        # Fetch annual income statement
-        df = finance.income_statement(period="year", lang=lang)
+        # Fetch annual income statement in executor to avoid blocking
+        loop = asyncio.get_event_loop()
+        df = await loop.run_in_executor(
+            None, lambda: finance.income_statement(period="year", lang=lang)
+        )
 
         if df is None or df.empty:
             return f"No income statement data found for {symbol}"
@@ -202,7 +225,7 @@ def get_income_statement(symbol: str, lang: str = "en") -> str:
 
 
 @mcp.tool()
-def get_balance_sheet(symbol: str, lang: str = "en") -> str:
+async def get_balance_sheet(symbol: str, lang: str = "en") -> str:
     """
     Get annual balance sheet for Vietnamese stocks with chronological year ordering.
 
@@ -219,8 +242,11 @@ def get_balance_sheet(symbol: str, lang: str = "en") -> str:
         stock = Vnstock().stock(symbol=symbol.upper(), source="VCI")
         finance = stock.finance
 
-        # Fetch annual balance sheet
-        df = finance.balance_sheet(period="year", lang=lang)
+        # Fetch annual balance sheet in executor to avoid blocking
+        loop = asyncio.get_event_loop()
+        df = await loop.run_in_executor(
+            None, lambda: finance.balance_sheet(period="year", lang=lang)
+        )
 
         if df is None or df.empty:
             return f"No balance sheet data found for {symbol}"
@@ -236,7 +262,7 @@ def get_balance_sheet(symbol: str, lang: str = "en") -> str:
 
 
 @mcp.tool()
-def get_cash_flow(symbol: str, lang: str = "en") -> str:
+async def get_cash_flow(symbol: str, lang: str = "en") -> str:
     """
     Get annual cash flow statement for Vietnamese stocks with chronological year ordering.
 
@@ -253,8 +279,11 @@ def get_cash_flow(symbol: str, lang: str = "en") -> str:
         stock = Vnstock().stock(symbol=symbol.upper(), source="VCI")
         finance = stock.finance
 
-        # Fetch annual cash flow statement
-        df = finance.cash_flow(period="year", lang=lang)
+        # Fetch annual cash flow statement in executor to avoid blocking
+        loop = asyncio.get_event_loop()
+        df = await loop.run_in_executor(
+            None, lambda: finance.cash_flow(period="year", lang=lang)
+        )
 
         if df is None or df.empty:
             return f"No cash flow data found for {symbol}"
@@ -270,7 +299,7 @@ def get_cash_flow(symbol: str, lang: str = "en") -> str:
 
 
 @mcp.tool()
-def get_financial_ratios(symbol: str, lang: str = "en") -> str:
+async def get_financial_ratios(symbol: str, lang: str = "en") -> str:
     """
     Get annual financial ratios and metrics for Vietnamese stocks with chronological year ordering.
 
@@ -287,15 +316,21 @@ def get_financial_ratios(symbol: str, lang: str = "en") -> str:
         stock = Vnstock().stock(symbol=symbol.upper(), source="VCI")
         finance = stock.finance
 
-        # Fetch annual financial ratios
-        df = finance.ratio(period="year", lang=lang)
+        # Fetch annual financial ratios in executor to avoid blocking
+        loop = asyncio.get_event_loop()
+        df = await loop.run_in_executor(
+            None, lambda: finance.ratio(period="year", lang=lang)
+        )
 
         if df is None or df.empty:
             return f"No financial ratio data found for {symbol}"
 
         # Flatten MultiIndex DataFrame first, then sort chronologically
-        flattened_df = flatten_hierarchical_index(
-            df, separator="_", handle_duplicates=True, drop_levels=0
+        flattened_df = await loop.run_in_executor(
+            None,
+            lambda: flatten_hierarchical_index(
+                df, separator="_", handle_duplicates=True, drop_levels=0
+            ),
         )
 
         # Sort flattened DataFrame by yearReport for chronological analysis
@@ -310,7 +345,7 @@ def get_financial_ratios(symbol: str, lang: str = "en") -> str:
 
 
 @mcp.tool()
-def get_dividend_history(symbol: str) -> str:
+async def get_dividend_history(symbol: str) -> str:
     """
     Get complete dividend history for Vietnamese stocks.
 
@@ -326,8 +361,9 @@ def get_dividend_history(symbol: str) -> str:
         stock = Vnstock().stock(symbol=symbol.upper(), source="TCBS")
         company = stock.company
 
-        # Fetch dividend history
-        df = company.dividends()
+        # Fetch dividend history in executor to avoid blocking
+        loop = asyncio.get_event_loop()
+        df = await loop.run_in_executor(None, lambda: company.dividends())
 
         if df is None or df.empty:
             return f"No dividend data found for {symbol}"
@@ -416,7 +452,7 @@ def get_vcb_exchange_rate(date: str) -> str:
 
 
 @mcp.tool()
-def get_company_info(symbol: str, info_type: str = "overview", lang: str = "en") -> str:
+async def get_company_info(symbol: str, info_type: str = "overview", lang: str = "en") -> str:
     """
     Get company information for Vietnamese stocks.
 
@@ -442,27 +478,32 @@ def get_company_info(symbol: str, info_type: str = "overview", lang: str = "en")
         stock = Vnstock().stock(symbol=symbol.upper(), source="VCI")
         company = stock.company
 
-        # Fetch the requested company information
+        # Fetch the requested company information in executor to avoid blocking
+        loop = asyncio.get_event_loop()
         if info_type == "overview":
-            df = company.overview()
+            df = await loop.run_in_executor(None, lambda: company.overview())
         elif info_type == "shareholders":
-            df = company.shareholders()
+            df = await loop.run_in_executor(None, lambda: company.shareholders())
         elif info_type == "officers":
             # Default to working officers, can be extended to accept filter parameter
-            df = company.officers(filter_by="working")
+            df = await loop.run_in_executor(
+                None, lambda: company.officers(filter_by="working")
+            )
         elif info_type == "subsidiaries":
             # Default to all subsidiaries and associated companies
-            df = company.subsidiaries(filter_by="all")
+            df = await loop.run_in_executor(
+                None, lambda: company.subsidiaries(filter_by="all")
+            )
         elif info_type == "events":
-            df = company.events()
+            df = await loop.run_in_executor(None, lambda: company.events())
         elif info_type == "news":
-            df = company.news()
+            df = await loop.run_in_executor(None, lambda: company.news())
         elif info_type == "reports":
-            df = company.reports()
+            df = await loop.run_in_executor(None, lambda: company.reports())
         elif info_type == "ratio_summary":
-            df = company.ratio_summary()
+            df = await loop.run_in_executor(None, lambda: company.ratio_summary())
         elif info_type == "trading_stats":
-            df = company.trading_stats()
+            df = await loop.run_in_executor(None, lambda: company.trading_stats())
         else:
             return f"Invalid info_type '{info_type}'. Valid types: overview, shareholders, officers, subsidiaries, events, news, reports, ratio_summary, trading_stats"
 
@@ -477,7 +518,7 @@ def get_company_info(symbol: str, info_type: str = "overview", lang: str = "en")
 
 
 @mcp.tool()
-def calculate_returns(
+async def calculate_returns(
     symbols: list,
     start_date: str,
     end_date: str,
@@ -502,12 +543,16 @@ def calculate_returns(
         import json
 
         # Fetch and clean price data for multiple symbols
+        loop = asyncio.get_event_loop()
         all_data = []
         for symbol in symbols:
             try:
                 # Initialize Quote object with VCI source
                 quote = Quote(symbol=symbol, source="VCI")
-                df = quote.history(start=start_date, end=end_date, interval="1D")
+                df = await loop.run_in_executor(
+                    None,
+                    lambda: quote.history(start=start_date, end=end_date, interval="1D"),
+                )
 
                 if df is None or df.empty:
                     return f"No data found for {symbol} between {start_date} and {end_date}"
@@ -564,7 +609,7 @@ def calculate_returns(
 
 
 @mcp.tool()
-def optimize_portfolio(
+async def optimize_portfolio(
     symbols: list,
     start_date: str,
     end_date: str,
@@ -591,12 +636,16 @@ def optimize_portfolio(
         import json
 
         # Fetch and clean price data for multiple symbols
+        loop = asyncio.get_event_loop()
         all_data = []
         for symbol in symbols:
             try:
                 # Initialize Quote object with VCI source
                 quote = Quote(symbol=symbol, source="VCI")
-                df = quote.history(start=start_date, end=end_date, interval="1D")
+                df = await loop.run_in_executor(
+                    None,
+                    lambda: quote.history(start=start_date, end=end_date, interval="1D"),
+                )
 
                 if df is None or df.empty:
                     return f"No data found for {symbol} between {start_date} and {end_date}"
@@ -685,7 +734,7 @@ def optimize_portfolio(
 
 
 @mcp.tool()
-def full_portfolio_optimization(
+async def full_portfolio_optimization(
     symbols: list,
     start_date: str,
     end_date: str,
@@ -714,12 +763,16 @@ def full_portfolio_optimization(
         import json
 
         # Fetch and clean price data for multiple symbols
+        loop = asyncio.get_event_loop()
         all_data = []
         for symbol in symbols:
             try:
                 # Initialize Quote object with VCI source
                 quote = Quote(symbol=symbol, source="VCI")
-                df = quote.history(start=start_date, end=end_date, interval="1D")
+                df = await loop.run_in_executor(
+                    None,
+                    lambda: quote.history(start=start_date, end=end_date, interval="1D"),
+                )
 
                 if df is None or df.empty:
                     return f"No data found for {symbol} between {start_date} and {end_date}"
@@ -872,7 +925,7 @@ def full_portfolio_optimization(
 
 
 @mcp.tool()
-def get_fund_listing(fund_type: str = "") -> str:
+async def get_fund_listing(fund_type: str = "") -> str:
     """
     Get list of all available mutual funds.
 
@@ -884,8 +937,9 @@ def get_fund_listing(fund_type: str = "") -> str:
         fund types, owners, inception dates, and performance metrics
     """
     try:
-        # Fetch fund listing
-        df = fund.listing(fund_type=fund_type)
+        # Fetch fund listing in executor to avoid blocking
+        loop = asyncio.get_event_loop()
+        df = await loop.run_in_executor(None, lambda: fund.listing(fund_type=fund_type))
 
         if df is None or df.empty:
             return f"No funds found for type: {fund_type}"
@@ -898,7 +952,7 @@ def get_fund_listing(fund_type: str = "") -> str:
 
 
 @mcp.tool()
-def search_funds(symbol: str) -> str:
+async def search_funds(symbol: str) -> str:
     """
     Search for mutual funds by symbol or partial name.
 
@@ -909,8 +963,9 @@ def search_funds(symbol: str) -> str:
         JSON string with matching funds including their IDs and short names
     """
     try:
-        # Search for funds
-        df = fund.filter(symbol=symbol)
+        # Search for funds in executor to avoid blocking
+        loop = asyncio.get_event_loop()
+        df = await loop.run_in_executor(None, lambda: fund.filter(symbol=symbol))
 
         if df is None or df.empty:
             return f"No funds found matching: {symbol}"
@@ -923,7 +978,7 @@ def search_funds(symbol: str) -> str:
 
 
 @mcp.tool()
-def get_fund_nav_report(symbol: str) -> str:
+async def get_fund_nav_report(symbol: str) -> str:
     """
     Get historical NAV report for a specific mutual fund.
 
@@ -934,8 +989,11 @@ def get_fund_nav_report(symbol: str) -> str:
         JSON string with historical NAV data including dates and NAV per unit
     """
     try:
-        # Fetch NAV report
-        df = fund.details.nav_report(symbol=symbol.upper())
+        # Fetch NAV report in executor to avoid blocking
+        loop = asyncio.get_event_loop()
+        df = await loop.run_in_executor(
+            None, lambda: fund.details.nav_report(symbol=symbol.upper())
+        )
 
         if df is None or df.empty:
             return f"No NAV data found for fund: {symbol}"
@@ -948,7 +1006,7 @@ def get_fund_nav_report(symbol: str) -> str:
 
 
 @mcp.tool()
-def get_fund_top_holdings(symbol: str) -> str:
+async def get_fund_top_holdings(symbol: str) -> str:
     """
     Get top 10 holdings for a specific mutual fund.
 
@@ -960,8 +1018,11 @@ def get_fund_top_holdings(symbol: str) -> str:
         net asset percentages, asset types, and last update date
     """
     try:
-        # Fetch top holdings
-        df = fund.details.top_holding(symbol=symbol.upper())
+        # Fetch top holdings in executor to avoid blocking
+        loop = asyncio.get_event_loop()
+        df = await loop.run_in_executor(
+            None, lambda: fund.details.top_holding(symbol=symbol.upper())
+        )
 
         if df is None or df.empty:
             return f"No top holdings data found for fund: {symbol}"
@@ -974,7 +1035,7 @@ def get_fund_top_holdings(symbol: str) -> str:
 
 
 @mcp.tool()
-def get_fund_industry_allocation(symbol: str) -> str:
+async def get_fund_industry_allocation(symbol: str) -> str:
     """
     Get industry allocation breakdown for a specific mutual fund.
 
@@ -986,8 +1047,11 @@ def get_fund_industry_allocation(symbol: str) -> str:
         and net asset percentages
     """
     try:
-        # Fetch industry allocation
-        df = fund.details.industry_holding(symbol=symbol.upper())
+        # Fetch industry allocation in executor to avoid blocking
+        loop = asyncio.get_event_loop()
+        df = await loop.run_in_executor(
+            None, lambda: fund.details.industry_holding(symbol=symbol.upper())
+        )
 
         if df is None or df.empty:
             return f"No industry allocation data found for fund: {symbol}"
@@ -1000,7 +1064,7 @@ def get_fund_industry_allocation(symbol: str) -> str:
 
 
 @mcp.tool()
-def get_fund_asset_allocation(symbol: str) -> str:
+async def get_fund_asset_allocation(symbol: str) -> str:
     """
     Get asset allocation breakdown for a specific mutual fund.
 
@@ -1012,8 +1076,11 @@ def get_fund_asset_allocation(symbol: str) -> str:
         and asset percentages
     """
     try:
-        # Fetch asset allocation
-        df = fund.details.asset_holding(symbol=symbol.upper())
+        # Fetch asset allocation in executor to avoid blocking
+        loop = asyncio.get_event_loop()
+        df = await loop.run_in_executor(
+            None, lambda: fund.details.asset_holding(symbol=symbol.upper())
+        )
 
         if df is None or df.empty:
             return f"No asset allocation data found for fund: {symbol}"
@@ -1027,7 +1094,7 @@ def get_fund_asset_allocation(symbol: str) -> str:
 
 def main():
     """Main entry point for the MCP server."""
-    # Run server with HTTP transport for remote deployment
+    # Run with HTTP transport (host and port already set in constructor)
     mcp.run(transport="http")
 
 
