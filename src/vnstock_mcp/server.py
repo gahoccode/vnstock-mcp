@@ -123,7 +123,9 @@ async def get_crypto_history(
         loop = asyncio.get_event_loop()
         df = await loop.run_in_executor(
             None,
-            lambda: crypto.quote.history(start=start_date, end=end_date, interval=interval),
+            lambda: crypto.quote.history(
+                start=start_date, end=end_date, interval=interval
+            ),
         )
 
         if df is None or df.empty:
@@ -165,7 +167,9 @@ async def get_index_history(
             loop = asyncio.get_event_loop()
             df = await loop.run_in_executor(
                 None,
-                lambda: quote.history(start=start_date, end=end_date, interval=interval),
+                lambda: quote.history(
+                    start=start_date, end=end_date, interval=interval
+                ),
             )
         else:
             # Use MSN source for international indices
@@ -173,7 +177,9 @@ async def get_index_history(
             loop = asyncio.get_event_loop()
             df = await loop.run_in_executor(
                 None,
-                lambda: index.quote.history(start=start_date, end=end_date, interval=interval),
+                lambda: index.quote.history(
+                    start=start_date, end=end_date, interval=interval
+                ),
             )
 
         if df is None or df.empty:
@@ -452,7 +458,9 @@ def get_vcb_exchange_rate(date: str) -> str:
 
 
 @mcp.tool()
-async def get_company_info(symbol: str, info_type: str = "overview", lang: str = "en") -> str:
+async def get_company_info(
+    symbol: str, info_type: str = "overview", lang: str = "en"
+) -> str:
     """
     Get company information for Vietnamese stocks.
 
@@ -551,7 +559,9 @@ async def calculate_returns(
                 quote = Quote(symbol=symbol, source="VCI")
                 df = await loop.run_in_executor(
                     None,
-                    lambda: quote.history(start=start_date, end=end_date, interval="1D"),
+                    lambda: quote.history(
+                        start=start_date, end=end_date, interval="1D"
+                    ),
                 )
 
                 if df is None or df.empty:
@@ -644,7 +654,9 @@ async def optimize_portfolio(
                 quote = Quote(symbol=symbol, source="VCI")
                 df = await loop.run_in_executor(
                     None,
-                    lambda: quote.history(start=start_date, end=end_date, interval="1D"),
+                    lambda: quote.history(
+                        start=start_date, end=end_date, interval="1D"
+                    ),
                 )
 
                 if df is None or df.empty:
@@ -771,7 +783,9 @@ async def full_portfolio_optimization(
                 quote = Quote(symbol=symbol, source="VCI")
                 df = await loop.run_in_executor(
                     None,
-                    lambda: quote.history(start=start_date, end=end_date, interval="1D"),
+                    lambda: quote.history(
+                        start=start_date, end=end_date, interval="1D"
+                    ),
                 )
 
                 if df is None or df.empty:
