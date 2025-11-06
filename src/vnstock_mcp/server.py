@@ -5,14 +5,19 @@ Provides tools to fetch stock, forex, crypto, and index historical data from vns
 
 from fastmcp import FastMCP
 import asyncio
+import os
 from vnstock import Vnstock, Quote
 from vnstock.core.utils.transform import flatten_hierarchical_index
 from vnstock.explorer.misc.gold_price import sjc_gold_price, btmc_goldprice
 from vnstock.explorer.misc.exchange_rate import vcb_exchange_rate
 from vnstock.explorer.fmarket.fund import Fund
 
-# Initialize the MCP server
-mcp = FastMCP("vnstock")
+# Environment-based configuration
+PORT = int(os.environ.get("PORT", 8080))
+HOST = os.environ.get("MCP_HOST", "0.0.0.0")
+
+# Initialize the MCP server with host and port for HTTP transport
+mcp = FastMCP("vnstock", host=HOST, port=PORT)
 
 # Initialize fund object for mutual fund data
 fund = Fund()
@@ -713,8 +718,8 @@ async def get_fund_asset_allocation(symbol: str) -> str:
 
 def main():
     """Main entry point for the MCP server."""
-    # Run server with stdio transport (default)
-    mcp.run()
+    # Run server with HTTP transport for remote deployment
+    mcp.run(transport="http")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: vnstock-mcp-server
+    env: python
+    plan: free
+    buildCommand: "uv sync"
+    startCommand: "uv run src/vnstock_mcp/server.py"
+    envVars:
+      - key: PORT
+        value: 8080
+      - key: MCP_HOST
+        value: 0.0.0.0
+    autoDeploy: true

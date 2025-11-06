@@ -57,4 +57,5 @@ The server is organized into 6 main tool categories:
 - Non-blocking operations via `loop.run_in_executor()`
 - Consistent JSON string return format for all data
 - Comprehensive error handling with user-friendly messages
-
+- you don't use uv to set your service's 
+Python version for deployment on Render
