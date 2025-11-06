@@ -561,7 +561,7 @@ async def calculate_returns(
                 quote = Quote(symbol=symbol, source="VCI")
                 df = await loop.run_in_executor(
                     None,
-                    lambda: quote.history(
+                    lambda q=quote: q.history(
                         start=start_date, end=end_date, interval="1D"
                     ),
                 )
@@ -657,7 +657,7 @@ async def optimize_portfolio(
                 quote = Quote(symbol=symbol, source="VCI")
                 df = await loop.run_in_executor(
                     None,
-                    lambda: quote.history(
+                    lambda q=quote: q.history(
                         start=start_date, end=end_date, interval="1D"
                     ),
                 )
@@ -787,7 +787,7 @@ async def full_portfolio_optimization(
                 quote = Quote(symbol=symbol, source="VCI")
                 df = await loop.run_in_executor(
                     None,
-                    lambda: quote.history(
+                    lambda q=quote: q.history(
                         start=start_date, end=end_date, interval="1D"
                     ),
                 )
