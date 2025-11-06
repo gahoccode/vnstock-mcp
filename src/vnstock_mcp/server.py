@@ -3,13 +3,14 @@ Vietnamese Stock Market Data MCP Server
 Provides tools to fetch stock, forex, crypto, and index historical data from vnstock
 """
 
-from fastmcp import FastMCP
 import asyncio
-from vnstock import Vnstock, Quote
+
+from fastmcp import FastMCP
+from vnstock import Quote, Vnstock
 from vnstock.core.utils.transform import flatten_hierarchical_index
-from vnstock.explorer.misc.gold_price import sjc_gold_price, btmc_goldprice
-from vnstock.explorer.misc.exchange_rate import vcb_exchange_rate
 from vnstock.explorer.fmarket.fund import Fund
+from vnstock.explorer.misc.exchange_rate import vcb_exchange_rate
+from vnstock.explorer.misc.gold_price import btmc_goldprice, sjc_gold_price
 
 # Initialize the MCP server
 mcp = FastMCP("vnstock")

@@ -4,13 +4,13 @@ Provides tools to fetch stock, forex, crypto, and index historical data from vns
 """
 
 from mcp.server.fastmcp import FastMCP
-from vnstock import Vnstock, Quote
-from vnstock.core.utils.transform import flatten_hierarchical_index
-from vnstock.explorer.misc.gold_price import sjc_gold_price, btmc_goldprice
-from vnstock.explorer.misc.exchange_rate import vcb_exchange_rate
-from vnstock.explorer.fmarket.fund import Fund
-from pypfopt import EfficientFrontier, risk_models, expected_returns
+from pypfopt import EfficientFrontier, expected_returns, risk_models
 from pypfopt.exceptions import OptimizationError
+from vnstock import Quote, Vnstock
+from vnstock.core.utils.transform import flatten_hierarchical_index
+from vnstock.explorer.fmarket.fund import Fund
+from vnstock.explorer.misc.exchange_rate import vcb_exchange_rate
+from vnstock.explorer.misc.gold_price import btmc_goldprice, sjc_gold_price
 
 # Initialize the MCP server
 mcp = FastMCP("vnstock")
@@ -493,8 +493,9 @@ def calculate_returns(
         JSON string with expected returns data, methodology, and statistics
     """
     try:
-        import pandas as pd
         import json
+
+        import pandas as pd
 
         # Fetch and clean price data for multiple symbols
         all_data = []
@@ -582,8 +583,9 @@ def optimize_portfolio(
         JSON string with optimal weights and portfolio performance metrics
     """
     try:
-        import pandas as pd
         import json
+
+        import pandas as pd
 
         # Fetch and clean price data for multiple symbols
         all_data = []
@@ -705,8 +707,9 @@ def full_portfolio_optimization(
         JSON string with all three optimized portfolios and performance comparison
     """
     try:
-        import pandas as pd
         import json
+
+        import pandas as pd
 
         # Fetch and clean price data for multiple symbols
         all_data = []
