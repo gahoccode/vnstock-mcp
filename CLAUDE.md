@@ -59,3 +59,4 @@ The server is organized into 6 main tool categories:
 - Comprehensive error handling with user-friendly messages
 - you don't use uv to set your service's 
 Python version for deployment on Render
+- you can generate a requirements.txt from your Astral uv pyproject.toml using uv’s export feature. The recommended command is: uv export --format requirements-txt > requirements.txt
