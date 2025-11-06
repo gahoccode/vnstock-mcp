@@ -3,16 +3,17 @@ Vietnamese Stock Market Data MCP Server
 Provides tools to fetch stock, forex, crypto, and index historical data from vnstock
 """
 
-import os
 import asyncio
+import os
+
 from fastmcp import FastMCP
-from vnstock import Vnstock, Quote
-from vnstock.core.utils.transform import flatten_hierarchical_index
-from vnstock.explorer.misc.gold_price import sjc_gold_price, btmc_goldprice
-from vnstock.explorer.misc.exchange_rate import vcb_exchange_rate
-from vnstock.explorer.fmarket.fund import Fund
-from pypfopt import EfficientFrontier, risk_models, expected_returns
+from pypfopt import EfficientFrontier, expected_returns, risk_models
 from pypfopt.exceptions import OptimizationError
+from vnstock import Quote, Vnstock
+from vnstock.core.utils.transform import flatten_hierarchical_index
+from vnstock.explorer.fmarket.fund import Fund
+from vnstock.explorer.misc.exchange_rate import vcb_exchange_rate
+from vnstock.explorer.misc.gold_price import btmc_goldprice, sjc_gold_price
 
 # Get port from environment variable (Render sets this, defaults to 8001 for local dev)
 PORT = int(os.environ.get("PORT", 8001))
@@ -547,8 +548,9 @@ async def calculate_returns(
         JSON string with expected returns data, methodology, and statistics
     """
     try:
-        import pandas as pd
         import json
+
+        import pandas as pd
 
         # Fetch and clean price data for multiple symbols
         loop = asyncio.get_event_loop()
@@ -642,8 +644,9 @@ async def optimize_portfolio(
         JSON string with optimal weights and portfolio performance metrics
     """
     try:
-        import pandas as pd
         import json
+
+        import pandas as pd
 
         # Fetch and clean price data for multiple symbols
         loop = asyncio.get_event_loop()
@@ -771,8 +774,9 @@ async def full_portfolio_optimization(
         JSON string with all three optimized portfolios and performance comparison
     """
     try:
-        import pandas as pd
         import json
+
+        import pandas as pd
 
         # Fetch and clean price data for multiple symbols
         loop = asyncio.get_event_loop()

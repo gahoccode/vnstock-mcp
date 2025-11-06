@@ -1,8 +1,9 @@
 """Pytest configuration for vnstock-mcp tests."""
 
-import pytest
 import asyncio
-from typing import AsyncGenerator, Generator
+from collections.abc import Generator
+
+import pytest
 
 
 @pytest.fixture(scope="session")
