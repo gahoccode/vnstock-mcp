@@ -104,6 +104,66 @@ vnstock-mcp/
 
 ## Claude Desktop Integration
 
+### Using Proxy Server (Recommended for Remote MCP)
+
+**What is proxy_server.py?**
+
+The `proxy_server.py` acts as a local bridge between Claude Desktop (which requires stdio transport) and your remote MCP server on Render (which uses HTTP transport):
+
+```
+Claude Desktop (stdio) ←→ proxy_server.py ←→ Remote MCP Server (HTTP)
+```
+
+**Step 1: Configure the Proxy Server**
+
+Edit `proxy_server.py` and update the URL to point to your Render deployment:
+
+```python
+from fastmcp import FastMCP
+
+# Create a proxy to a remote server
+proxy = FastMCP.as_proxy(
+    "https://vnstock-mcp.onrender.com/mcp",  # ← Replace with your Render URL
+    name="Remote Server Proxy"
+)
+
+if __name__ == "__main__":
+    proxy.run()  # Runs via STDIO for Claude Desktop
+```
+
+**Step 2: Configure Claude Desktop**
+
+Add this configuration to your Claude Desktop config file:
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "vnstock-mcp-remote": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "/Users/YOUR_USERNAME/path/to/vnstock-mcp",
+        "run",
+        "proxy_server.py"
+      ]
+    }
+  }
+}
+```
+
+**Important:**
+- Replace `/Users/YOUR_USERNAME/Projects/vnstock-mcp` with your actual project path
+- Replace `https://vnstock-mcp.onrender.com/mcp` in `proxy_server.py` with your Render URL
+- Restart Claude Desktop after saving the configuration
+
+**Step 3: Verify Connection**
+
+After restarting Claude Desktop, look for the MCP server icon (🔌) to confirm successful connection.
+
+---
+
 ### Video Tutorial
 
 📺 **[Watch: How to Configure Claude Desktop with Remote MCP Server on Render](https://www.youtube.com/watch?v=NexhEJ0OcfA)**
