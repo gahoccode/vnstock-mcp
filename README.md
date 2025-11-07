@@ -2,6 +2,8 @@
 
 The unofficial MCP server that provides all the features of vnstock, allowing you to interact with your Claude Desktop using natural language processing capabilities.
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/gahoccode/vnstock-mcp)
+
 ## Features
 
 - 🚀 **Direct MCP Integration**: Connect to your vnstock MCP server via stdio
@@ -102,7 +104,35 @@ vnstock-mcp/
 
 ## Claude Desktop Integration
 
-To use this MCP server with Claude Desktop, add the following configuration to your Claude Desktop config file (`~/Library/Application Support/Claude/claude_desktop_config.json` on macOS):
+### Video Tutorial
+
+📺 **[Watch: How to Configure Claude Desktop with Remote MCP Server on Render](https://www.youtube.com/watch?v=NexhEJ0OcfA)**
+
+This tutorial shows you step-by-step how to configure Claude Desktop to connect to your remote MCP server hosted on Render.
+
+### Remote HTTP Server (Recommended - v0.2.0+)
+
+Connect to the deployed server at: `https://vnstock-mcp.onrender.com/mcp`
+
+**Note:**
+- HTTP transport is the replacement for the deprecated SSE transport
+- Use `/mcp` endpoint (not `/sse`)
+- Replace `vnstock-mcp.onrender.com` with your actual Render service URL if you deployed your own instance
+- No local configuration needed - access directly via HTTP endpoint
+
+---
+
+### Local stdio Transport (Requires code modification)
+
+⚠️ **Important:** To use local stdio transport with uvx/uv, you must modify `server.py`:
+```python
+# In src/vnstock_mcp/server.py line 1116, change:
+mcp.run(transport="http")  # Current
+# To:
+mcp.run(transport="stdio")  # or mcp.run() - stdio is default
+```
+
+Add the following configuration to your Claude Desktop config file (`~/Library/Application Support/Claude/claude_desktop_config.json` on macOS):
 
 **Method 1: Using uvx (if PATH configured)**
 ```json
