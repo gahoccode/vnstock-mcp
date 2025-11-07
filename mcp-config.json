@@ -1,0 +1,14 @@
+{
+  "vnstock": {
+    "command": "uv",
+    "args": [
+      "run",
+      "--with",
+      "fastmcp",
+      "fastmcp",
+      "run",
+      "/Users/tamle/Projects/vnstock-mcp/src/vn
+stock_mcp/server.py"
+    ]
+  }
+}
