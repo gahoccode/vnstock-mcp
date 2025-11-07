@@ -1,15 +1,31 @@
 services:
   - type: web
     name: vnstock-mcp-server
-    env: python
+    runtime: python
     plan: free
     region: singapore
     rootDir: src/vnstock_mcp
     buildCommand: "uv sync"
     startCommand: "uv run server.py"
+
+    # Monorepo build filter - paths are relative to repository root
+    buildFilter:
+      paths:
+        - src/vnstock_mcp/**     # Trigger builds when service code changes
+        - pyproject.toml          # Trigger when dependencies change
+        - uv.lock                 # Trigger when lock file changes
+        - render.yaml             # Trigger when render.yaml changes
+      ignoredPaths:
+        - "**.md"                 # Ignore markdown files
+        - docs/**                 # Ignore documentation directory
+        - tests/**                # Ignore test files (optional)
+        - sample questions/**     # Ignore example questions
+        - prds/**                 # Ignore product requirement docs
+
     envVars:
       - key: PORT
         value: 8001
       - key: MCP_HOST
         value: 0.0.0.0
+
     autoDeploy: true
