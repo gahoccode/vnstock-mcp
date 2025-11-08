@@ -6,7 +6,11 @@ Provides tools to fetch stock, forex, crypto, and index historical data from vns
 import asyncio
 
 from fastmcp import FastMCP
-from vnstock import Quote, Vnstock
+
+# Use explorer-level imports to avoid circular dependency with vnai
+from vnstock.explorer.vci import Quote, Company, Finance
+from vnstock.explorer.msn import Quote as MSNQuote
+from vnstock.explorer.tcbs import Company as TCBSCompany
 from vnstock.core.utils.transform import flatten_hierarchical_index
 from vnstock.explorer.fmarket.fund import Fund
 from vnstock.explorer.misc.exchange_rate import vcb_exchange_rate
@@ -76,13 +80,13 @@ async def get_forex_history(
     try:
         loop = asyncio.get_event_loop()
 
-        # Initialize Forex using Vnstock wrapper with MSN source
-        fx = Vnstock().fx(symbol=symbol, source="MSN")
+        # Initialize MSN Quote for forex data
+        quote = MSNQuote(symbol=symbol, source="MSN")
 
         # Fetch historical data in executor to avoid blocking
         df = await loop.run_in_executor(
             None,
-            lambda: fx.quote.history(start=start_date, end=end_date, interval=interval),
+            lambda: quote.history(start=start_date, end=end_date, interval=interval),
         )
 
         if df is None or df.empty:
@@ -115,15 +119,13 @@ async def get_crypto_history(
     try:
         loop = asyncio.get_event_loop()
 
-        # Initialize Crypto using Vnstock wrapper with MSN source
-        crypto = Vnstock().crypto(symbol=symbol, source="MSN")
+        # Initialize MSN Quote for crypto data
+        quote = MSNQuote(symbol=symbol, source="MSN")
 
         # Fetch historical data in executor to avoid blocking
         df = await loop.run_in_executor(
             None,
-            lambda: crypto.quote.history(
-                start=start_date, end=end_date, interval=interval
-            ),
+            lambda: quote.history(start=start_date, end=end_date, interval=interval),
         )
 
         if df is None or df.empty:
@@ -162,7 +164,7 @@ async def get_index_history(
         vietnam_indices = ["VNINDEX", "HNXINDEX", "UPCOMINDEX"]
 
         if symbol.upper() in vietnam_indices:
-            # Use Quote with VCI source for Vietnamese indices
+            # Use VCI Quote for Vietnamese indices
             quote = Quote(symbol=symbol, source="VCI")
             df = await loop.run_in_executor(
                 None,
@@ -171,11 +173,11 @@ async def get_index_history(
                 ),
             )
         else:
-            # Use MSN source for international indices
-            index = Vnstock().world_index(symbol=symbol, source="MSN")
+            # Use MSN Quote for international indices
+            quote = MSNQuote(symbol=symbol, source="MSN")
             df = await loop.run_in_executor(
                 None,
-                lambda: index.quote.history(
+                lambda: quote.history(
                     start=start_date, end=end_date, interval=interval
                 ),
             )
@@ -207,9 +209,8 @@ async def get_income_statement(symbol: str, lang: str = "en") -> str:
     try:
         loop = asyncio.get_event_loop()
 
-        # Initialize stock with VCI source
-        stock = Vnstock().stock(symbol=symbol.upper(), source="VCI")
-        finance = stock.finance
+        # Initialize Finance with VCI source
+        finance = Finance(symbol=symbol.upper(), source="VCI")
 
         # Fetch annual income statement in executor to avoid blocking
         df = await loop.run_in_executor(
@@ -245,9 +246,8 @@ async def get_balance_sheet(symbol: str, lang: str = "en") -> str:
     try:
         loop = asyncio.get_event_loop()
 
-        # Initialize stock with VCI source
-        stock = Vnstock().stock(symbol=symbol.upper(), source="VCI")
-        finance = stock.finance
+        # Initialize Finance with VCI source
+        finance = Finance(symbol=symbol.upper(), source="VCI")
 
         # Fetch annual balance sheet in executor to avoid blocking
         df = await loop.run_in_executor(
@@ -283,9 +283,8 @@ async def get_cash_flow(symbol: str, lang: str = "en") -> str:
     try:
         loop = asyncio.get_event_loop()
 
-        # Initialize stock with VCI source
-        stock = Vnstock().stock(symbol=symbol.upper(), source="VCI")
-        finance = stock.finance
+        # Initialize Finance with VCI source
+        finance = Finance(symbol=symbol.upper(), source="VCI")
 
         # Fetch annual cash flow statement in executor to avoid blocking
         df = await loop.run_in_executor(
@@ -321,9 +320,8 @@ async def get_financial_ratios(symbol: str, lang: str = "en") -> str:
     try:
         loop = asyncio.get_event_loop()
 
-        # Initialize stock with VCI source
-        stock = Vnstock().stock(symbol=symbol.upper(), source="VCI")
-        finance = stock.finance
+        # Initialize Finance with VCI source
+        finance = Finance(symbol=symbol.upper(), source="VCI")
 
         # Fetch annual financial ratios in executor to avoid blocking
         df = await loop.run_in_executor(
@@ -367,9 +365,8 @@ async def get_dividend_history(symbol: str) -> str:
     try:
         loop = asyncio.get_event_loop()
 
-        # Initialize stock with TCBS source (dividends only available from TCBS)
-        stock = Vnstock().stock(symbol=symbol.upper(), source="TCBS")
-        company = stock.company
+        # Initialize TCBS Company (dividends only available from TCBS)
+        company = TCBSCompany(symbol=symbol.upper())
 
         # Fetch dividend history in executor to avoid blocking
         df = await loop.run_in_executor(None, lambda: company.dividends())
@@ -493,9 +490,8 @@ async def get_company_info(
     try:
         loop = asyncio.get_event_loop()
 
-        # Initialize stock with VCI source for company information
-        stock = Vnstock().stock(symbol=symbol.upper(), source="VCI")
-        company = stock.company
+        # Initialize Company with VCI source
+        company = Company(symbol=symbol.upper(), source="VCI")
 
         # Fetch the requested company information in executor to avoid blocking
         if info_type == "overview":
