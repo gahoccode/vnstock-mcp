@@ -19,9 +19,6 @@ from vnstock.explorer.misc.gold_price import btmc_goldprice, sjc_gold_price
 # Initialize the MCP server
 mcp = FastMCP("vnstock")
 
-# Initialize fund object for mutual fund data
-fund = Fund()
-
 
 @mcp.tool()
 async def get_stock_history(
@@ -81,7 +78,7 @@ async def get_forex_history(
         loop = asyncio.get_event_loop()
 
         # Initialize MSN Quote for forex data
-        quote = MSNQuote(symbol=symbol, source="MSN")
+        quote = MSNQuote(symbol=symbol)
 
         # Fetch historical data in executor to avoid blocking
         df = await loop.run_in_executor(
@@ -120,7 +117,7 @@ async def get_crypto_history(
         loop = asyncio.get_event_loop()
 
         # Initialize MSN Quote for crypto data
-        quote = MSNQuote(symbol=symbol, source="MSN")
+        quote = MSNQuote(symbol=symbol)
 
         # Fetch historical data in executor to avoid blocking
         df = await loop.run_in_executor(
@@ -174,7 +171,7 @@ async def get_index_history(
             )
         else:
             # Use MSN Quote for international indices
-            quote = MSNQuote(symbol=symbol, source="MSN")
+            quote = MSNQuote(symbol=symbol)
             df = await loop.run_in_executor(
                 None,
                 lambda: quote.history(
@@ -549,6 +546,9 @@ async def get_fund_listing(fund_type: str = "") -> str:
     try:
         loop = asyncio.get_event_loop()
 
+        # Initialize Fund with lazy loading
+        fund = Fund()
+
         # Fetch fund listing in executor to avoid blocking
         df = await loop.run_in_executor(None, lambda: fund.listing(fund_type=fund_type))
 
@@ -576,6 +576,9 @@ async def search_funds(symbol: str) -> str:
     try:
         loop = asyncio.get_event_loop()
 
+        # Initialize Fund with lazy loading
+        fund = Fund()
+
         # Search for funds in executor to avoid blocking
         df = await loop.run_in_executor(None, lambda: fund.filter(symbol=symbol))
 
@@ -602,6 +605,9 @@ async def get_fund_nav_report(symbol: str) -> str:
     """
     try:
         loop = asyncio.get_event_loop()
+
+        # Initialize Fund with lazy loading
+        fund = Fund()
 
         # Fetch NAV report in executor to avoid blocking
         df = await loop.run_in_executor(
@@ -633,6 +639,9 @@ async def get_fund_top_holdings(symbol: str) -> str:
     try:
         loop = asyncio.get_event_loop()
 
+        # Initialize Fund with lazy loading
+        fund = Fund()
+
         # Fetch top holdings in executor to avoid blocking
         df = await loop.run_in_executor(
             None, lambda: fund.details.top_holding(symbol=symbol.upper())
@@ -663,6 +672,9 @@ async def get_fund_industry_allocation(symbol: str) -> str:
     try:
         loop = asyncio.get_event_loop()
 
+        # Initialize Fund with lazy loading
+        fund = Fund()
+
         # Fetch industry allocation in executor to avoid blocking
         df = await loop.run_in_executor(
             None, lambda: fund.details.industry_holding(symbol=symbol.upper())
@@ -692,6 +704,9 @@ async def get_fund_asset_allocation(symbol: str) -> str:
     """
     try:
         loop = asyncio.get_event_loop()
+
+        # Initialize Fund with lazy loading
+        fund = Fund()
 
         # Fetch asset allocation in executor to avoid blocking
         df = await loop.run_in_executor(
