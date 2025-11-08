@@ -7,17 +7,12 @@ import asyncio
 
 from fastmcp import FastMCP
 
-# Use explorer-level imports to avoid circular dependency with vnai
-from vnstock.explorer.vci import Quote, Company, Finance
-from vnstock.explorer.msn import Quote as MSNQuote
-from vnstock.explorer.tcbs import Company as TCBSCompany
-from vnstock.core.utils.transform import flatten_hierarchical_index
-from vnstock.explorer.fmarket.fund import Fund
-from vnstock.explorer.misc.exchange_rate import vcb_exchange_rate
-from vnstock.explorer.misc.gold_price import btmc_goldprice, sjc_gold_price
-
 # Initialize the MCP server
 mcp = FastMCP("vnstock")
+
+# NOTE: All vnstock imports are done lazily (inside functions) to avoid circular dependency
+# Importing from vnstock.* at module level triggers vnstock/__init__.py which imports vnai,
+# causing a circular import error. Lazy imports solve this by deferring import until needed.
 
 
 @mcp.tool()
@@ -37,10 +32,13 @@ async def get_stock_history(
         JSON string with historical price data including time, open, high, low, close, volume
     """
     try:
+        # Lazy import to avoid circular dependency
+        from vnstock.explorer.vci import Quote
+
         loop = asyncio.get_event_loop()
 
-        # Initialize Quote object with VCI source
-        quote = Quote(symbol=symbol, source="VCI")
+        # Initialize VCI Quote object
+        quote = Quote(symbol=symbol)
 
         # Fetch historical data in executor to avoid blocking
         df = await loop.run_in_executor(
@@ -75,6 +73,9 @@ async def get_forex_history(
         JSON string with historical forex rate data (time, open, high, low, close)
     """
     try:
+        # Lazy import to avoid circular dependency
+        from vnstock.explorer.msn import Quote as MSNQuote
+
         loop = asyncio.get_event_loop()
 
         # Initialize MSN Quote for forex data
@@ -114,6 +115,9 @@ async def get_crypto_history(
         JSON string with historical crypto price data (time, open, high, low, close, volume)
     """
     try:
+        # Lazy import to avoid circular dependency
+        from vnstock.explorer.msn import Quote as MSNQuote
+
         loop = asyncio.get_event_loop()
 
         # Initialize MSN Quote for crypto data
@@ -155,6 +159,10 @@ async def get_index_history(
         JSON string with historical index data (time, open, high, low, close, volume)
     """
     try:
+        # Lazy imports to avoid circular dependency
+        from vnstock.explorer.vci import Quote
+        from vnstock.explorer.msn import Quote as MSNQuote
+
         loop = asyncio.get_event_loop()
 
         # Check if it's a Vietnamese index
@@ -162,7 +170,7 @@ async def get_index_history(
 
         if symbol.upper() in vietnam_indices:
             # Use VCI Quote for Vietnamese indices
-            quote = Quote(symbol=symbol, source="VCI")
+            quote = Quote(symbol=symbol)
             df = await loop.run_in_executor(
                 None,
                 lambda: quote.history(
@@ -204,6 +212,9 @@ async def get_income_statement(symbol: str, lang: str = "en") -> str:
         profit metrics, and earnings per share (EPS) for multiple years, sorted chronologically
     """
     try:
+        # Lazy import to avoid circular dependency
+        from vnstock.explorer.vci import Finance
+
         loop = asyncio.get_event_loop()
 
         # Initialize Finance with VCI source
@@ -241,6 +252,9 @@ async def get_balance_sheet(symbol: str, lang: str = "en") -> str:
         equity, and detailed financial position metrics for multiple years, sorted chronologically
     """
     try:
+        # Lazy import to avoid circular dependency
+        from vnstock.explorer.vci import Finance
+
         loop = asyncio.get_event_loop()
 
         # Initialize Finance with VCI source
@@ -278,6 +292,9 @@ async def get_cash_flow(symbol: str, lang: str = "en") -> str:
         and financing activities for multiple years, sorted chronologically
     """
     try:
+        # Lazy import to avoid circular dependency
+        from vnstock.explorer.vci import Finance
+
         loop = asyncio.get_event_loop()
 
         # Initialize Finance with VCI source
@@ -315,6 +332,10 @@ async def get_financial_ratios(symbol: str, lang: str = "en") -> str:
         ROE (Return on Equity), and other key financial health indicators, sorted chronologically
     """
     try:
+        # Lazy imports to avoid circular dependency
+        from vnstock.explorer.vci import Finance
+        from vnstock.core.utils.transform import flatten_hierarchical_index
+
         loop = asyncio.get_event_loop()
 
         # Initialize Finance with VCI source
@@ -360,6 +381,9 @@ async def get_dividend_history(symbol: str) -> str:
         cash year, dividend percentage, and issue method for all historical records
     """
     try:
+        # Lazy import to avoid circular dependency
+        from vnstock.explorer.tcbs import Company as TCBSCompany
+
         loop = asyncio.get_event_loop()
 
         # Initialize TCBS Company (dividends only available from TCBS)
@@ -391,6 +415,9 @@ async def get_sjc_gold_price(date: str = None) -> str:
         JSON string with gold price data including name, branch, buy_price, sell_price, date
     """
     try:
+        # Lazy import to avoid circular dependency
+        from vnstock.explorer.misc.gold_price import sjc_gold_price
+
         loop = asyncio.get_event_loop()
 
         # Fetch SJC gold prices in executor to avoid blocking
@@ -417,6 +444,9 @@ async def get_btmc_gold_price() -> str:
         buy_price, sell_price, world_price, time
     """
     try:
+        # Lazy import to avoid circular dependency
+        from vnstock.explorer.misc.gold_price import btmc_goldprice
+
         loop = asyncio.get_event_loop()
 
         # Fetch BTMC gold prices in executor to avoid blocking
@@ -445,6 +475,9 @@ async def get_vcb_exchange_rate(date: str) -> str:
         buy_cash, buy_transfer, sell, date for 20 major currencies
     """
     try:
+        # Lazy import to avoid circular dependency
+        from vnstock.explorer.misc.exchange_rate import vcb_exchange_rate
+
         loop = asyncio.get_event_loop()
 
         # Fetch VCB exchange rates in executor to avoid blocking
@@ -485,6 +518,9 @@ async def get_company_info(
         JSON string with company information based on the requested type
     """
     try:
+        # Lazy import to avoid circular dependency
+        from vnstock.explorer.vci import Company
+
         loop = asyncio.get_event_loop()
 
         # Initialize Company with VCI source
@@ -544,6 +580,9 @@ async def get_fund_listing(fund_type: str = "") -> str:
         fund types, owners, inception dates, and performance metrics
     """
     try:
+        # Lazy import to avoid circular dependency
+        from vnstock.explorer.fmarket.fund import Fund
+
         loop = asyncio.get_event_loop()
 
         # Initialize Fund with lazy loading
@@ -574,6 +613,9 @@ async def search_funds(symbol: str) -> str:
         JSON string with matching funds including their IDs and short names
     """
     try:
+        # Lazy import to avoid circular dependency
+        from vnstock.explorer.fmarket.fund import Fund
+
         loop = asyncio.get_event_loop()
 
         # Initialize Fund with lazy loading
@@ -604,6 +646,9 @@ async def get_fund_nav_report(symbol: str) -> str:
         JSON string with historical NAV data including dates and NAV per unit
     """
     try:
+        # Lazy import to avoid circular dependency
+        from vnstock.explorer.fmarket.fund import Fund
+
         loop = asyncio.get_event_loop()
 
         # Initialize Fund with lazy loading
@@ -637,6 +682,9 @@ async def get_fund_top_holdings(symbol: str) -> str:
         net asset percentages, asset types, and last update date
     """
     try:
+        # Lazy import to avoid circular dependency
+        from vnstock.explorer.fmarket.fund import Fund
+
         loop = asyncio.get_event_loop()
 
         # Initialize Fund with lazy loading
@@ -670,6 +718,9 @@ async def get_fund_industry_allocation(symbol: str) -> str:
         and net asset percentages
     """
     try:
+        # Lazy import to avoid circular dependency
+        from vnstock.explorer.fmarket.fund import Fund
+
         loop = asyncio.get_event_loop()
 
         # Initialize Fund with lazy loading
@@ -703,6 +754,9 @@ async def get_fund_asset_allocation(symbol: str) -> str:
         and asset percentages
     """
     try:
+        # Lazy import to avoid circular dependency
+        from vnstock.explorer.fmarket.fund import Fund
+
         loop = asyncio.get_event_loop()
 
         # Initialize Fund with lazy loading

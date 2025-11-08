@@ -8,25 +8,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
-- **Circular import error with vnai dependency** - Replaced top-level `from vnstock import Vnstock, Quote` imports with explorer-level imports (`from vnstock.explorer.vci import Quote, Company, Finance`, `from vnstock.explorer.msn import Quote as MSNQuote`, `from vnstock.explorer.tcbs import Company as TCBSCompany`) to avoid circular dependency between vnstock and vnai modules. This resolves the `AttributeError: partially initialized module 'vnai' has no attribute 'setup'` error when running via uvx.
+- **Circular import error with vnai dependency** - Implemented lazy imports for all vnstock modules to avoid circular dependency. All imports from `vnstock.explorer.*` are now moved inside function bodies instead of module-level. This resolves the `AttributeError: partially initialized module 'vnai' has no attribute 'setup'` error when running via uvx.
+  - **Root cause**: Any import from `vnstock.*` (even explorer-level) triggers `vnstock/__init__.py` execution, which imports vnai and calls `vnai.setup()`, creating a circular dependency before vnai is fully initialized.
+  - **Solution**: Lazy imports - all vnstock imports are deferred until function execution, avoiding module-level initialization.
 
 ### Changed
-- **Lazy loading for Fund objects** - Moved `Fund()` initialization from module-level (eager loading) to function-level (lazy loading) in all 6 fund management tools. This eliminates the API call to Fmarket at server startup, resulting in:
-  - Faster server startup (no network I/O at import time)
-  - More resilient initialization (server can start even if Fmarket API is temporarily unavailable)
-  - Better separation of concerns (data fetching only happens when fund tools are actually invoked)
-- **Direct class instantiation** - Replaced `Vnstock()` wrapper pattern with direct class instantiation for all data source modules:
-  - Forex: `Vnstock().fx()` → `MSNQuote(symbol, source='MSN')`
-  - Crypto: `Vnstock().crypto()` → `MSNQuote(symbol, source='MSN')`
-  - World indices: `Vnstock().world_index()` → `MSNQuote(symbol, source='MSN')`
-  - Financial statements: `Vnstock().stock().finance` → `Finance(symbol, source='VCI')`
-  - Company info: `Vnstock().stock().company` → `Company(symbol, source='VCI')`
-  - Dividends: `Vnstock().stock(source='TCBS').company` → `TCBSCompany(symbol)`
+- **Lazy imports for all vnstock modules** - Moved ALL vnstock imports from module-level to function-level across all 20 MCP tools:
+  - Market Data tools (4): `Quote` from vci, `MSNQuote` from msn
+  - Financial Analysis tools (4): `Finance` from vci, `flatten_hierarchical_index` from core.utils
+  - Company Information tools (2): `Company` from vci, `TCBSCompany` from tcbs
+  - Precious Metals tools (2): `sjc_gold_price`, `btmc_goldprice` from misc.gold_price
+  - Exchange Rate tool (1): `vcb_exchange_rate` from misc.exchange_rate
+  - Fund Management tools (6): `Fund` from fmarket.fund
+- **Quote class initialization fix** - Removed invalid `source` parameter from explorer-level Quote instantiation (explorer classes don't accept source parameter)
+- **Removed module-level Fund() initialization** - Eliminated eager API call at server startup by moving `Fund()` instantiation inside each fund function
 
 ### Technical Details
 - **Affected files**: `src/vnstock_mcp/server.py`
-- **Functions modified**: 15 out of 20 MCP tools
-- **Import pattern**: Explorer-level imports (`vnstock.explorer.{vci,msn,tcbs}`) instead of top-level (`vnstock`)
+- **Functions modified**: All 20 MCP tools
+- **Import pattern**: Lazy imports inside try blocks with comment `# Lazy import to avoid circular dependency`
+- **Performance impact**: Minimal - first call to each function slightly slower, subsequent calls use cached imports
 - **Compatibility**: No breaking changes to tool signatures or behavior
 
 ## [0.1.0] - 2024-11-06
