@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- **Hardcoded source parameter in Finance and Company classes** - Removed hardcoded `source="VCI"` parameter from Finance and Company class instantiations. The `source` parameter is not valid for explorer-level classes (`vnstock.explorer.vci.Finance` and `vnstock.explorer.vci.Company`), which are already VCI-specific by their module path. This fix prevents potential initialization errors and aligns with the vnstock library's API design.
+  - **Affected functions**:
+    - `get_income_statement()` - Finance initialization (line 221)
+    - `get_balance_sheet()` - Finance initialization (line 261)
+    - `get_cash_flow()` - Finance initialization (line 301)
+    - `get_financial_ratios()` - Finance initialization (line 342)
+    - `get_company_info()` - Company initialization (line 527)
+  - **Impact**: All 5 functions now correctly instantiate Finance/Company classes without invalid parameters
+  - **Scope**: Bug fix, no breaking changes to tool behavior or API
+
 - **Circular import error with vnai dependency** - Implemented lazy imports for all vnstock modules to avoid circular dependency. All imports from `vnstock.explorer.*` are now moved inside function bodies instead of module-level. This resolves the `AttributeError: partially initialized module 'vnai' has no attribute 'setup'` error when running via uvx.
   - **Root cause**: Any import from `vnstock.*` (even explorer-level) triggers `vnstock/__init__.py` execution, which imports vnai and calls `vnai.setup()`, creating a circular dependency before vnai is fully initialized.
   - **Solution**: Lazy imports - all vnstock imports are deferred until function execution, avoiding module-level initialization.
