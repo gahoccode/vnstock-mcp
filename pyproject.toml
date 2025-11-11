@@ -1,6 +1,6 @@
 [project]
 name = "vnstock-mcp"
-version = "0.1.3"
+version = "0.1.4"
 description = "Vietnamese Stock Market MCP Server - FastMCP 2.0"
 readme = "README.md"
 license = "MIT"
@@ -10,7 +10,8 @@ requires-python = ">=3.10"
 
 dependencies = [
     "fastmcp>=2.0.0",
-    "vnstock",
+    "vnstock==3.2.2",
+    "vnai==2.1.9",
     "pyportfolioopt>=1.5.6",
     "pandas",
     "anthropic>=0.34.0",
