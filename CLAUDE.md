@@ -57,4 +57,4 @@ The server is organized into 6 main tool categories:
 - Non-blocking operations via `loop.run_in_executor()`
 - Consistent JSON string return format for all data
 - Comprehensive error handling with user-friendly messages
-
+- vnstock==3.2.2 is the most stable version. Use this version to avoid the circular import issue with vnai.
