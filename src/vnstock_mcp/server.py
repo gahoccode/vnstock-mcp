@@ -218,7 +218,7 @@ async def get_income_statement(symbol: str, lang: str = "en") -> str:
         loop = asyncio.get_event_loop()
 
         # Initialize Finance with VCI source
-        finance = Finance(symbol=symbol.upper(), source="VCI")
+        finance = Finance(symbol=symbol.upper())
 
         # Fetch annual income statement in executor to avoid blocking
         df = await loop.run_in_executor(
@@ -258,7 +258,7 @@ async def get_balance_sheet(symbol: str, lang: str = "en") -> str:
         loop = asyncio.get_event_loop()
 
         # Initialize Finance with VCI source
-        finance = Finance(symbol=symbol.upper(), source="VCI")
+        finance = Finance(symbol=symbol.upper())
 
         # Fetch annual balance sheet in executor to avoid blocking
         df = await loop.run_in_executor(
@@ -298,7 +298,7 @@ async def get_cash_flow(symbol: str, lang: str = "en") -> str:
         loop = asyncio.get_event_loop()
 
         # Initialize Finance with VCI source
-        finance = Finance(symbol=symbol.upper(), source="VCI")
+        finance = Finance(symbol=symbol.upper())
 
         # Fetch annual cash flow statement in executor to avoid blocking
         df = await loop.run_in_executor(
@@ -339,7 +339,7 @@ async def get_financial_ratios(symbol: str, lang: str = "en") -> str:
         loop = asyncio.get_event_loop()
 
         # Initialize Finance with VCI source
-        finance = Finance(symbol=symbol.upper(), source="VCI")
+        finance = Finance(symbol=symbol.upper())
 
         # Fetch annual financial ratios in executor to avoid blocking
         df = await loop.run_in_executor(
@@ -524,7 +524,7 @@ async def get_company_info(
         loop = asyncio.get_event_loop()
 
         # Initialize Company with VCI source
-        company = Company(symbol=symbol.upper(), source="VCI")
+        company = Company(symbol=symbol.upper())
 
         # Fetch the requested company information in executor to avoid blocking
         if info_type == "overview":
