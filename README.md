@@ -19,7 +19,7 @@ The unofficial MCP server that provides all the features of vnstock, allowing yo
 **For End Users (Recommended)**
 ```bash
 # Install from PyPI and run directly
-uvx vnstock-mcp
+uvx vnstock-mcp@latest
 ```
 
 **For Developers**
@@ -40,7 +40,7 @@ uv sync
 **End Users (uvx method)**
 ```bash
 # Run directly from PyPI
-uvx vnstock-mcp
+uvx vnstock-mcp@latest
 ```
 
 **Developers (local development)**
@@ -85,7 +85,7 @@ vnstock-mcp/
 ### **uvx (Recommended for Users)**
 - **Purpose**: Run Python packages directly from PyPI
 - **Use case**: End users who just want to use the MCP server
-- **Command**: `uvx vnstock-mcp`
+- **Command**: `uvx vnstock-mcp@latest`
 - **Benefits**:
   - No local setup required
   - Automatic dependency management
