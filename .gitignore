@@ -4,7 +4,9 @@ prds/
 # Virtual environments
 .venv/
 venv/
-env/
+
+# Environment variable
+.env
 
 # uv cache
 .uv-cache/
