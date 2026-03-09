@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.5] - 2025-03-09
+
+### Changed
+- **Dependency updates** - Updated `vnstock==3.2.2` to `vnstock>=3.3.0`
+- **Removed vnai dependency** - The `vnai==2.1.9` dependency is no longer needed with vnstock 3.3.0+
+- **Added pytz>=2025.2** - Required for timezone handling
+
+### Removed
+- **`get_dividend_history` tool** - Removed the TCBS-based dividend history feature. This tool was dependent on the vnai package which is no longer required.
+
 ### Fixed
 - **Hardcoded source parameter in Finance and Company classes** - Removed hardcoded `source="VCI"` parameter from Finance and Company class instantiations. The `source` parameter is not valid for explorer-level classes (`vnstock.explorer.vci.Finance` and `vnstock.explorer.vci.Company`), which are already VCI-specific by their module path. This fix prevents potential initialization errors and aligns with the vnstock library's API design.
   - **Affected functions**:
