@@ -7,6 +7,7 @@ import asyncio
 import os
 
 from fastmcp import FastMCP
+from starlette.responses import JSONResponse
 
 # Detect transport mode from environment
 # If PORT env var is set (e.g., by Render), use HTTP transport
@@ -16,6 +17,16 @@ _use_http = "PORT" in os.environ
 
 # Initialize the MCP server
 mcp = FastMCP("vnstock")
+
+
+@mcp.custom_route("/health", methods=["GET"])
+async def health_check(request):
+    """Health check endpoint for monitoring and load balancer health probes."""
+    return JSONResponse({
+        "status": "healthy",
+        "service": "vnstock-mcp",
+        "version": "0.2.0"
+    })
 
 # NOTE: All vnstock imports are done lazily (inside functions) to avoid circular dependency
 # Importing from vnstock.* at module level triggers vnstock/__init__.py which imports vnai,

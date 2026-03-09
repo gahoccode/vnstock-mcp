@@ -4,9 +4,9 @@ The unofficial MCP server that provides all the features of vnstock, allowing yo
 
 ## Features
 
-- 🚀 **Direct MCP Integration**: Connect to your vnstock MCP server via stdio
+- 🚀 **Dual Transport Support**: Auto-detects STDIO (local) or HTTP (cloud) transport
+- ☁️ **Cloud Deployment**: One-click deploy to Render.com free tier
 - 🤖 **LLM-Powered**: Natural language processing with Anthropic Claude
-- 💬 **Interactive CLI**: Rich terminal interface with auto-completion and history
 - 📊 **Beautiful Output**: Formatted tables, charts, and data visualization
 - 🔧 **Tool Management**: Automatic tool discovery and validation
 - 🎯 **Smart Parsing**: Vietnamese stock symbol and date format support
