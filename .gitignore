@@ -1,6 +1,11 @@
 prds/
 .claude/
 
+# Environment variables
+.env
+.env.*
+!.env.example
+
 # Virtual environments
 .venv/
 venv/

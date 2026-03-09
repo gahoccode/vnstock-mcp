@@ -35,10 +35,10 @@ uv run python server.py
 - **`tests/`** - Test suite with pytest configuration
 
 ### Key Components
-The server is organized into 6 main tool categories:
+The server is organized into 5 main tool categories:
 
 1. **Market Data Tools** - Stock history, forex, crypto, indices data
-2. **Financial Analysis Tools** - Income statements, balance sheets, cash flows, ratios, dividends
+2. **Financial Analysis Tools** - Income statements, balance sheets, cash flows, ratios
 3. **Company Information Tools** - Company overview, shareholders, officers, subsidiaries, events
 4. **Precious Metals Tools** - SJC and BTMC gold prices
 5. **Exchange Rate Tools** - Vietcombank exchange rates
@@ -47,7 +47,6 @@ The server is organized into 6 main tool categories:
 ### Data Sources
 - **VCI** - Primary source for stocks, financials, company info
 - **MSN** - Forex, crypto, international indices
-- **TCBS** - Dividend data
 - **Direct APIs** - Gold prices (SJC, BTMC) and exchange rates (VCB)
 
 ## Technical Implementation
@@ -57,4 +56,3 @@ The server is organized into 6 main tool categories:
 - Non-blocking operations via `loop.run_in_executor()`
 - Consistent JSON string return format for all data
 - Comprehensive error handling with user-friendly messages
-- vnstock==3.2.2 is the most stable version. Use this version to avoid the circular import issue with vnai.

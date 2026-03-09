@@ -369,40 +369,6 @@ async def get_financial_ratios(symbol: str, lang: str = "en") -> str:
 
 
 @mcp.tool()
-async def get_dividend_history(symbol: str) -> str:
-    """
-    Get complete dividend history for Vietnamese stocks.
-
-    Args:
-        symbol: Stock ticker symbol (e.g., 'VCI', 'ACB', 'HPG')
-
-    Returns:
-        JSON string with complete dividend history including exercise date,
-        cash year, dividend percentage, and issue method for all historical records
-    """
-    try:
-        # Lazy import to avoid circular dependency
-        from vnstock.explorer.tcbs import Company as TCBSCompany
-
-        loop = asyncio.get_event_loop()
-
-        # Initialize TCBS Company (dividends only available from TCBS)
-        company = TCBSCompany(symbol=symbol.upper())
-
-        # Fetch dividend history in executor to avoid blocking
-        df = await loop.run_in_executor(None, lambda: company.dividends())
-
-        if df is None or df.empty:
-            return f"No dividend data found for {symbol}"
-
-        # Convert to JSON
-        return df.to_json(orient="records", date_format="iso", indent=2)
-
-    except Exception as e:
-        return f"Error fetching dividend history for {symbol}: {str(e)}"
-
-
-@mcp.tool()
 async def get_sjc_gold_price(date: str = None) -> str:
     """
     Get SJC gold prices (current or historical).

@@ -56,7 +56,7 @@ uv run python src/vnstock_mcp/server.py
 > Show me FPT's financial statements for 2024
 > Get the latest SJC gold price
 > What are HPG's key financial ratios?
-> Show me dividend history for ACB stock
+> Get VCB exchange rates for today
 ```
 
 ### Project Structure
@@ -72,8 +72,8 @@ vnstock-mcp/
 │   ├── __init__.py
 │   └── conftest.py         # Pytest configuration
 ├── dist/                   # Built packages
-│   ├── vnstock_mcp-0.1.0-py3-none-any.whl
-│   └── vnstock_mcp-0.1.0.tar.gz
+│   ├── vnstock_mcp-0.1.5-py3-none-any.whl
+│   └── vnstock_mcp-0.1.5.tar.gz
 ├── sample questions/       # Usage examples
 │   └── questions.md
 ├── uv.lock                 # Dependency lock file
@@ -128,7 +128,7 @@ To use this MCP server with Claude Desktop, add the following configuration to y
 }
 ```
 
-**Method 3: Development from source**
+**Method 3: Development from source (script path)**
 ```json
 {
   "mcpServers": {
@@ -145,9 +145,28 @@ To use this MCP server with Claude Desktop, add the following configuration to y
 }
 ```
 
+**Method 4: Development from source (Python module)**
+```json
+{
+  "mcpServers": {
+    "vnstock-mcp": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "/Users/USERNAME/PATH_TO/vnstock-mcp",
+        "run",
+        "python",
+        "-m",
+        "vnstock_mcp.server"
+      ]
+    }
+  }
+}
+```
+
 **Note:**
 - Replace `YOUR_USERNAME` with your actual username in Method 2
-- Replace `USERNAME` with your actual username in Method 3
+- Replace `USERNAME` and `PATH_TO` with your actual username and path in Method 3 and 4
 - After quitting and restarting Claude Desktop, if it still can't detect the mcp server, check if `uvx` is in your PATH. If not, add `~/.local/bin` to your PATH:
 
 ```bash
@@ -158,6 +177,21 @@ source ~/.zshrc
 # For bash
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
 source ~/.bashrc
+```
+
+## Publishing to PyPI
+
+For maintainers, use the automated publish script:
+
+```bash
+# Set UV_PUBLISH_TOKEN in .env file, then run:
+python dev/publish.py
+```
+
+Or publish manually:
+
+```bash
+uv publish --token $UV_PUBLISH_TOKEN
 ```
 
 ## License
