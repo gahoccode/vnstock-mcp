@@ -1,6 +1,6 @@
 [project]
 name = "vnstock-mcp"
-version = "0.2.0"
+version = "0.3.0"
 description = "Vietnamese Stock Market MCP Server - FastMCP 2.0"
 readme = "README.md"
 license = "MIT"
@@ -58,6 +58,8 @@ ignore = [
 [dependency-groups]
 dev = [
     "ruff>=0.1.0",
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
 ]
 
 [tool.pytest.ini_options]

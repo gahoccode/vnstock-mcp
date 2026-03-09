@@ -65,18 +65,37 @@ vnstock-mcp/
 ├── src/
 │   └── vnstock_mcp/        # Python package
 │       ├── __init__.py     # Package initialization
-│       └── server.py       # Main MCP server
+│       ├── server.py       # MCP server (API Layer)
+│       ├── config.py       # Configuration constants
+│       ├── exceptions.py   # Custom exceptions
+│       ├── core/           # Service Layer (business logic)
+│       │   ├── base.py     # BaseService with async patterns
+│       │   ├── financial.py
+│       │   ├── company.py
+│       │   └── fund.py
+│       ├── models/         # Model Layer (result types)
+│       │   ├── base.py     # ServiceResult, DataFrameResult
+│       │   ├── financial.py
+│       │   ├── company.py
+│       │   └── fund.py
+│       └── utils/          # Utility functions
+│           └── data_transform.py
+├── docs/                   # Architecture documentation
+│   ├── ARCHITECTURE.md     # System architecture overview
+│   └── adr/                # Architecture Decision Records
+│       ├── 001-layered-architecture.md
+│       ├── 002-result-objects.md
+│       └── 003-lazy-imports.md
 ├── tests/                  # Test suite
 │   ├── __init__.py
 │   └── conftest.py         # Pytest configuration
 ├── dist/                   # Built packages
-│   ├── vnstock_mcp-0.1.5-py3-none-any.whl
-│   └── vnstock_mcp-0.1.5.tar.gz
 ├── sample questions/       # Usage examples
-│   └── questions.md
 ├── uv.lock                 # Dependency lock file
 └── README.md               # This file
 ```
+
+For detailed architecture documentation, see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## uv vs uvx: Which to Use?
 

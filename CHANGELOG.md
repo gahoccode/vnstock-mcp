@@ -7,21 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Removed
-- **Market Data Tools (4)** - Removed stock, forex, crypto, and index history tools
-  - `get_stock_history` - Vietnamese stock OHLCV data
-  - `get_forex_history` - Forex exchange rates (MSN source)
-  - `get_crypto_history` - Cryptocurrency prices (MSN source)
-  - `get_index_history` - Vietnamese & international indices
-- **Precious Metals Tools (2)** - Removed gold price tools
-  - `get_sjc_gold_price` - SJC gold prices
-  - `get_btmc_gold_price` - BTMC gold prices
-- **Exchange Rate Tool (1)** - Removed Vietcombank exchange rates
-  - `get_vcb_exchange_rate` - VCB exchange rates
+## [0.3.0] - 2026-03-09
 
 ### Changed
-- **Tool count reduced** - 18 → 11 MCP tools
-- **Remaining tools**: Financial Analysis (4), Company Information (1 multi-type), Fund Management (6)
+- **Layered Architecture Refactoring** - Major restructure to clean architecture
+  - **Service Layer** (`src/vnstock_mcp/core/`): Business logic separated from API layer
+  - **Model Layer** (`src/vnstock_mcp/models/`): Typed Result objects for consistent error handling
+  - **Thin API Layer**: `server.py` reduced to 11 tool definitions with minimal logic
+
+### Added
+- **Architecture Documentation** (`docs/architecture/`)
+  - System overview with Mermaid diagrams
+  - Data flow and component interaction diagrams
+  - Deployment architecture documentation
+- **Architecture Decision Records** (`docs/adr/`)
+  - ADR-001: Layered Architecture
+  - ADR-002: Result Pattern for Error Handling
+  - ADR-003: Lazy Loading Strategy
+
+### Technical Details
+- **New directories**: `src/vnstock_mcp/core/`, `src/vnstock_mcp/models/`
+- **Modified files**: `src/vnstock_mcp/server.py` (reduced from ~600 to ~200 lines)
+- **Pattern**: Each tool now delegates to service functions that return typed `Result` objects
+- **Error handling**: Consistent error messages via `Result.success()` and `Result.failure()`
 
 ## [0.2.0] - 2026-03-09
 
@@ -107,5 +115,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Async architecture with proper event loop management
 - Support for multiple data sources (VCI, MSN, TCBS, direct APIs)
 
-[Unreleased]: https://github.com/gahoccode/vnstock-mcp/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/gahoccode/vnstock-mcp/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/gahoccode/vnstock-mcp/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/gahoccode/vnstock-mcp/compare/v0.1.5...v0.2.0
+[0.1.5]: https://github.com/gahoccode/vnstock-mcp/compare/v0.1.0...v0.1.5
 [0.1.0]: https://github.com/gahoccode/vnstock-mcp/releases/tag/v0.1.0
