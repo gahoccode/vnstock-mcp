@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: vnstock-mcp-server
+    runtime: python
+    plan: free
+    region: singapore
+    buildCommand: "uv sync"
+    startCommand: "uv run python src/vnstock_mcp/server.py"
+
+    buildFilter:
+      paths:
+        - src/vnstock_mcp/**
+        - pyproject.toml
+        - uv.lock
+        - render.yaml
+      ignoredPaths:
+        - "**.md"
+        - docs/**
+        - tests/**
+
+    envVars:
+      - key: PORT
+        value: 8001
+
+    autoDeploy: true
