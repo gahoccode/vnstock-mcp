@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+- **Market Data Tools (4)** - Removed stock, forex, crypto, and index history tools
+  - `get_stock_history` - Vietnamese stock OHLCV data
+  - `get_forex_history` - Forex exchange rates (MSN source)
+  - `get_crypto_history` - Cryptocurrency prices (MSN source)
+  - `get_index_history` - Vietnamese & international indices
+- **Precious Metals Tools (2)** - Removed gold price tools
+  - `get_sjc_gold_price` - SJC gold prices
+  - `get_btmc_gold_price` - BTMC gold prices
+- **Exchange Rate Tool (1)** - Removed Vietcombank exchange rates
+  - `get_vcb_exchange_rate` - VCB exchange rates
+
+### Changed
+- **Tool count reduced** - 18 → 11 MCP tools
+- **Remaining tools**: Financial Analysis (4), Company Information (1 multi-type), Fund Management (6)
+
 ## [0.2.0] - 2026-03-09
 
 ### Added

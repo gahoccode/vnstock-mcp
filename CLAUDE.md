@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**VNStock MCP Server** is an unofficial MCP (Model Context Protocol) server that provides comprehensive Vietnamese stock market data integration through FastMCP 2.0. The project enables natural language interaction with Vietnamese financial data through Claude Desktop.
+**VNStock MCP Server** is an unofficial MCP (Model Context Protocol) server that provides Vietnamese stock market financial data integration through FastMCP 2.0. The project enables natural language interaction with Vietnamese financial data through Claude Desktop.
 
 ## Development Commands
 
@@ -35,19 +35,15 @@ uv run python server.py
 - **`tests/`** - Test suite with pytest configuration
 
 ### Key Components
-The server is organized into 5 main tool categories:
+The server is organized into 3 main tool categories (11 tools total):
 
-1. **Market Data Tools** - Stock history, forex, crypto, indices data
-2. **Financial Analysis Tools** - Income statements, balance sheets, cash flows, ratios
-3. **Company Information Tools** - Company overview, shareholders, officers, subsidiaries, events
-4. **Precious Metals Tools** - SJC and BTMC gold prices
-5. **Exchange Rate Tools** - Vietcombank exchange rates
-6. **Fund Management Tools** - Mutual fund listings, NAV reports, holdings, allocations
+1. **Financial Analysis Tools (4)** - Income statements, balance sheets, cash flows, ratios
+2. **Company Information Tools (1 multi-type)** - Company overview, shareholders, officers, subsidiaries, events
+3. **Fund Management Tools (6)** - Mutual fund listings, NAV reports, holdings, allocations
 
 ### Data Sources
-- **VCI** - Primary source for stocks, financials, company info
-- **MSN** - Forex, crypto, international indices
-- **Direct APIs** - Gold prices (SJC, BTMC) and exchange rates (VCB)
+- **VCI** - Primary source for financials, company info
+- **FMarket** - Fund data
 
 ## Technical Implementation
 

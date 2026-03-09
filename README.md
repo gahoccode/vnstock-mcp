@@ -1,6 +1,6 @@
 # VNStock MCP Server
 
-The unofficial MCP server that provides all the features of vnstock, allowing you to interact with your Claude Desktop using natural language processing capabilities.
+The unofficial MCP server that provides Vietnamese stock market financial data, allowing you to interact with your Claude Desktop using natural language processing capabilities.
 
 ## Features
 
@@ -52,9 +52,7 @@ uv run python src/vnstock_mcp/server.py
 ## Usage Examples
 
 ```
-> What's the current price of VNM stock?
 > Show me FPT's financial statements for 2024
-> Get the latest SJC gold price
 > What are HPG's key financial ratios?
 > Get VCB exchange rates for today
 ```
