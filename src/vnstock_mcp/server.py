@@ -4,8 +4,15 @@ Provides tools to fetch stock, forex, crypto, and index historical data from vns
 """
 
 import asyncio
+import os
 
 from fastmcp import FastMCP
+
+# Detect transport mode from environment
+# If PORT env var is set (e.g., by Render), use HTTP transport
+# Otherwise, default to STDIO transport for local usage (uvx)
+PORT = int(os.environ.get("PORT", 8001))
+_use_http = "PORT" in os.environ
 
 # Initialize the MCP server
 mcp = FastMCP("vnstock")
@@ -745,8 +752,12 @@ async def get_fund_asset_allocation(symbol: str) -> str:
 
 def main():
     """Main entry point for the MCP server."""
-    # Run server with stdio transport (default)
-    mcp.run()
+    if _use_http:
+        # HTTP transport for remote deployment (Render, etc.)
+        mcp.run(transport="streamable-http", host="0.0.0.0", port=PORT)
+    else:
+        # STDIO transport for local usage (uvx, Claude Desktop)
+        mcp.run()
 
 
 if __name__ == "__main__":

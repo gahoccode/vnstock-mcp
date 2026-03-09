@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-03-09
+
+### Added
+- **Dual transport support** - Auto-detects deployment environment via `PORT` env var
+  - `PORT` set (e.g., Render): HTTP transport on `0.0.0.0:PORT`
+  - `PORT` unset (local): STDIO transport for `uvx` / Claude Desktop
+- **Render deployment** - Added `render.yaml` for one-click Render.com deployment (free tier, Singapore region)
+- **Remote proxy** - Added `proxy_server.py` to bridge Claude Desktop (STDIO) to a remote HTTP server
+
+### Removed
+- **`pyportfolioopt` dependency** - Removed unused portfolio optimization dependency
+- **`anthropic` dependency** - Removed unused dependency (MCP server does not call Anthropic API)
+- **`requirements.txt`** - Superseded by `uv.lock`
+- **`server_backup.py`** - Stale backup file
+
+### Changed
+- **Version bump** - `0.1.5` → `0.2.0`
+- **FastMCP init** - Now configures `host` and `port` in constructor for HTTP readiness
+- **`main()` function** - Branches on transport based on `PORT` environment variable
+
+### Technical Details
+- **Modified files**: `src/vnstock_mcp/server.py` (~10 lines), `pyproject.toml`, `src/vnstock_mcp/__init__.py`
+- **New files**: `render.yaml`, `proxy_server.py`
+- **Deleted files**: `requirements.txt`, `server_backup.py`, `src/vnstock_mcp/.gitignore`
+- **Functions modified**: `main()` (transport selection), module-level init (env detection)
+- **No tool changes** - All 18 MCP tools remain identical
+
 ## [0.1.5] - 2025-03-09
 
 ### Changed
