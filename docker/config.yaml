@@ -1,0 +1,3 @@
+servers:
+  vnstock:
+    enabled: true

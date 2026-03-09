@@ -66,6 +66,15 @@ uv run python src/vnstock_mcp/server.py
 ```
 vnstock-mcp/
 ├── pyproject.toml          # Project configuration and dependencies
+├── Dockerfile              # Multi-stage Docker build
+├── docker-compose.yml      # Standalone container deployment
+├── docker-compose.gateway.yml  # Docker MCP Gateway deployment
+├── docker/                 # Gateway configuration
+│   ├── vnstock.yaml        # Server entry for gateway
+│   ├── registry.yaml       # Gateway registry
+│   └── config.yaml         # Gateway config
+├── render.yaml             # Render.com native Python deployment
+├── render-gateway.yaml     # Render.com Docker deployment
 ├── src/
 │   └── vnstock_mcp/        # Python package
 │       ├── __init__.py     # Package initialization
@@ -206,6 +215,58 @@ source ~/.zshrc
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
 source ~/.bashrc
 ```
+
+## Docker
+
+### Build the Image
+
+```bash
+docker build -t vnstock-mcp:latest .
+```
+
+### Run Standalone (HTTP Mode)
+
+```bash
+docker compose up
+```
+
+Test with: `curl http://localhost:8001/health`
+
+### Run with Docker MCP Gateway
+
+The server integrates with [Docker MCP Gateway](https://github.com/docker/mcp-gateway) for container-isolated MCP serving.
+
+```bash
+# Start the gateway with vnstock-mcp registered
+docker compose -f docker-compose.gateway.yml up
+```
+
+The gateway listens on port 8811 and starts vnstock-mcp containers on demand.
+
+### Run in STDIO Mode
+
+When no `PORT` environment variable is set, the server uses STDIO transport (compatible with Docker MCP Gateway's on-demand container model):
+
+```bash
+docker run -i --rm vnstock-mcp:latest
+```
+
+### Docker MCP Toolkit (Docker Desktop)
+
+If you have Docker Desktop with the MCP Toolkit extension:
+
+```bash
+# Connect Claude Code to Docker MCP Gateway
+claude mcp add MCP_DOCKER -s user -- docker mcp gateway run
+```
+
+### Deploy to Render (Docker)
+
+A separate Render Blueprint using the Dockerfile is available:
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/gahoccode/vnstock-mcp)
+
+Use `render-gateway.yaml` for Docker-based deployment (the existing `render.yaml` uses Render's native Python runtime).
 
 ## Publishing to PyPI
 

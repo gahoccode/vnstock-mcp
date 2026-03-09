@@ -1,0 +1,11 @@
+services:
+  gateway:
+    image: docker/mcp-gateway
+    ports:
+      - "8811:8811"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./docker:/mcp
+    command:
+      - --registry=/mcp/registry.yaml
+      - --config=/mcp/config.yaml

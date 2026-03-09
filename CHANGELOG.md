@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Docker MCP Gateway Integration** - Containerized deployment with Docker MCP Gateway support
+  - `Dockerfile` - Multi-stage build with Python 3.12-slim, non-root user, health check
+  - `docker-compose.yml` - Standalone container deployment (HTTP mode on port 8001)
+  - `docker-compose.gateway.yml` - Docker MCP Gateway orchestration (port 8811)
+  - `docker/vnstock.yaml` - Gateway server entry with tool definitions and network allowlist
+  - `docker/registry.yaml` - Gateway registry configuration
+  - `docker/config.yaml` - Gateway server enablement
+  - `render-gateway.yaml` - Render.com Docker-based deployment blueprint
+  - `.dockerignore` - Excludes unnecessary files from Docker context
+  - `requirements.txt` - Exported from pyproject.toml for Docker pip install
+
+### Technical Details
+- **New files**: `Dockerfile`, `.dockerignore`, `docker-compose.yml`, `docker-compose.gateway.yml`, `render-gateway.yaml`, `requirements.txt`, `docker/vnstock.yaml`, `docker/registry.yaml`, `docker/config.yaml`
+- **Modified files**: `README.md` (Docker usage section), `CLAUDE.md` (Docker dev commands), `CHANGELOG.md`
+- **Transport**: No PORT env = STDIO (gateway on-demand), PORT set = HTTP (standalone/Render)
+- **Existing deployment**: `render.yaml` (native Python) remains unchanged
+
 ## [0.3.0] - 2026-03-09
 
 ### Changed

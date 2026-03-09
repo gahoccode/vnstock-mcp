@@ -1,0 +1,36 @@
+name: vnstock-mcp
+type: server
+title: VNStock MCP Server
+description: Vietnamese stock market financial data (financials, company info, mutual funds)
+image: vnstock-mcp:latest
+longLived: false
+allowHosts:
+  - "*.vndirect.com.vn:443"
+  - "*.fmarket.vn:443"
+  - "api.vci.com.vn:443"
+metadata:
+  category: Finance
+  tags: [python, finance, vietnam, stock-market]
+tools:
+  - name: get_income_statement
+    description: "Get annual income statement for Vietnamese stocks"
+  - name: get_balance_sheet
+    description: "Get annual balance sheet for Vietnamese stocks"
+  - name: get_cash_flow
+    description: "Get annual cash flow statement for Vietnamese stocks"
+  - name: get_financial_ratios
+    description: "Get annual financial ratios for Vietnamese stocks"
+  - name: get_company_info
+    description: "Get company information (overview, shareholders, officers, etc.)"
+  - name: get_fund_listing
+    description: "Get list of all available mutual funds"
+  - name: search_funds
+    description: "Search for mutual funds by symbol or name"
+  - name: get_fund_nav_report
+    description: "Get historical NAV report for a mutual fund"
+  - name: get_fund_top_holdings
+    description: "Get top 10 holdings for a mutual fund"
+  - name: get_fund_industry_allocation
+    description: "Get industry allocation for a mutual fund"
+  - name: get_fund_asset_allocation
+    description: "Get asset allocation for a mutual fund"

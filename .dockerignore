@@ -1,0 +1,22 @@
+.git
+__pycache__
+*.py[cod]
+*$py.class
+dist/
+build/
+*.egg-info/
+.eggs/
+docs/
+tests/
+dev/
+prds/
+sample questions/
+.env
+.env.*
+.venv/
+venv/
+.uv-cache/
+.claude/
+.ruff_cache/
+*.md
+!README.md
