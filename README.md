@@ -17,12 +17,14 @@ The unofficial MCP server that provides Vietnamese stock market financial data, 
 ### 1. Installation
 
 **For End Users (Recommended)**
+
 ```bash
 # Install from PyPI and run directly
 uvx vnstock-mcp@latest
 ```
 
 **For Developers**
+
 ```bash
 # Clone the repository
 git clone https://github.com/gahoccode/vnstock-mcp.git
@@ -38,12 +40,14 @@ uv sync
 ### 2. Run the Server
 
 **End Users (uvx method)**
+
 ```bash
 # Run directly from PyPI
 uvx vnstock-mcp@latest
 ```
 
 **Developers (local development)**
+
 ```bash
 # Run from source
 uv run python src/vnstock_mcp/server.py
@@ -100,6 +104,7 @@ For detailed architecture documentation, see [docs/ARCHITECTURE.md](docs/ARCHITE
 ## uv vs uvx: Which to Use?
 
 ### **uvx (Recommended for Users)**
+
 - **Purpose**: Run Python packages directly from PyPI
 - **Use case**: End users who just want to use the MCP server
 - **Command**: `uvx vnstock-mcp@latest`
@@ -109,6 +114,7 @@ For detailed architecture documentation, see [docs/ARCHITECTURE.md](docs/ARCHITE
   - Isolated execution environment
 
 ### **uv (Recommended for Developers)**
+
 - **Purpose**: Python project and package management
 - **Use case**: Developers who want to modify/contribute to the code
 - **Command**: `uv run python src/vnstock_mcp/server.py`
@@ -122,6 +128,7 @@ For detailed architecture documentation, see [docs/ARCHITECTURE.md](docs/ARCHITE
 To use this MCP server with Claude Desktop, add the following configuration to your Claude Desktop config file (`~/Library/Application Support/Claude/claude_desktop_config.json` on macOS):
 
 **Method 1: Using uvx (if PATH configured)**
+
 ```json
 {
   "mcpServers": {
@@ -134,6 +141,7 @@ To use this MCP server with Claude Desktop, add the following configuration to y
 ```
 
 **Method 2: Using uvx (if PATH NOT configured)**
+
 ```json
 {
   "mcpServers": {
@@ -146,6 +154,7 @@ To use this MCP server with Claude Desktop, add the following configuration to y
 ```
 
 **Method 3: Development from source (script path)**
+
 ```json
 {
   "mcpServers": {
@@ -163,6 +172,7 @@ To use this MCP server with Claude Desktop, add the following configuration to y
 ```
 
 **Method 4: Development from source (Python module)**
+
 ```json
 {
   "mcpServers": {
@@ -182,6 +192,7 @@ To use this MCP server with Claude Desktop, add the following configuration to y
 ```
 
 **Note:**
+
 - Replace `YOUR_USERNAME` with your actual username in Method 2
 - Replace `USERNAME` and `PATH_TO` with your actual username and path in Method 3 and 4
 - After quitting and restarting Claude Desktop, if it still can't detect the mcp server, check if `uvx` is in your PATH. If not, add `~/.local/bin` to your PATH:
@@ -202,7 +213,7 @@ For maintainers, use the automated publish script:
 
 ```bash
 # Set UV_PUBLISH_TOKEN in .env file, then run:
-python dev/publish.py
+uv run dev/publish.py
 ```
 
 Or publish manually:
