@@ -7,5 +7,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./docker:/mcp
     command:
+      - --catalog=/mcp/vnstock.yaml
       - --registry=/mcp/registry.yaml
       - --config=/mcp/config.yaml

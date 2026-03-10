@@ -1,3 +1,3 @@
 registry:
-  vnstock:
-    ref: file:///mcp/servers/vnstock.yaml
+  vnstock-mcp:
+    ref: ""

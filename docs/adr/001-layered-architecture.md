@@ -20,7 +20,7 @@ src/vnstock_mcp/
 
 We separated the codebase into three distinct layers:
 
-1. **API Layer** (`server.py`) - Thin MCP tool definitions with `@mcp.tool()` decorators
+1. **API Layer** (`server.py`) - Thin MCP tool definitions with `@mcp.tool()` decorators, health check endpoint, and dual transport entry point (STDIO/HTTP)
 2. **Service Layer** (`core/`) - Business logic, data fetching, parameter validation
 3. **Model Layer** (`models/`) - Result types and data structures
 
@@ -28,7 +28,7 @@ We separated the codebase into three distinct layers:
 src/vnstock_mcp/
 ├── __init__.py
 ├── server.py           # API Layer
-├── config.py           # Configuration constants
+├── config.py           # Configuration constants, transport settings
 ├── exceptions.py       # Custom exceptions
 ├── core/
 │   ├── __init__.py
@@ -55,7 +55,7 @@ Each layer has a single responsibility:
 
 | Layer | Responsibility |
 |-------|---------------|
-| API | MCP protocol handling, tool registration, JSON serialization |
+| API | MCP protocol handling, tool registration, JSON serialization, health check, transport selection |
 | Service | Business logic, data fetching, validation, transformation |
 | Model | Data structures, serialization logic, error states |
 
@@ -92,6 +92,7 @@ async def test_get_income_statement():
 - **Maintainability**: Changes are isolated to specific layers
 - **Readability**: Code is organized by purpose and domain
 - **Extensibility**: Adding new tools or data sources is straightforward
+- **Deployability**: The layered structure supported adding Docker MCP Gateway and dual transport (STDIO/HTTP) without modifying service or model layers
 
 ### Negative
 

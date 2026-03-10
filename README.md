@@ -1,136 +1,28 @@
-# VNStock MCP Server
-
 The unofficial MCP server that provides Vietnamese stock market financial data, allowing you to interact with your Claude Desktop using natural language processing capabilities.
 
 ## Features
 
-- 🚀 **Dual Transport Support**: Auto-detects STDIO (local) or HTTP (cloud) transport
-- ☁️ **Cloud Deployment**: One-click deploy to Render.com free tier
-- 🤖 **LLM-Powered**: Natural language processing with Anthropic Claude
-- 📊 **Beautiful Output**: Formatted tables, charts, and data visualization
-- 🔧 **Tool Management**: Automatic tool discovery and validation
-- 🎯 **Smart Parsing**: Vietnamese stock symbol and date format support
-- ⚡ **Error Handling**: Robust error recovery and user-friendly messages
+- **Dual Transport Support**: Auto-detects STDIO (local) or HTTP (cloud) transport
+- **Cloud Deployment**: One-click deploy to Render.com free tier
+- **LLM-Powered**: Natural language processing with Anthropic Claude
+- **Beautiful Output**: Formatted tables, charts, and data visualization
+- **Tool Management**: Automatic tool discovery and validation
+- **Smart Parsing**: Vietnamese stock symbol and date format support
+- **Error Handling**: Robust error recovery and user-friendly messages
 
 ## Quick Start
-
-### 1. Installation
-
-**For End Users (Recommended)**
 
 ```bash
 # Install from PyPI and run directly
 uvx vnstock-mcp@latest
 ```
 
-**For Developers**
-
-```bash
-# Clone the repository
-git clone https://github.com/gahoccode/vnstock-mcp.git
-cd vnstock-mcp
-
-# Install uv if you don't have it
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# Install dependencies
-uv sync
-```
-
-### 2. Run the Server
-
-**End Users (uvx method)**
-
-```bash
-# Run directly from PyPI
-uvx vnstock-mcp@latest
-```
-
-**Developers (local development)**
-
-```bash
-# Run from source
-uv run python src/vnstock_mcp/server.py
-```
-
 ## Usage Examples
 
 ```
-> Show me FPT's financial statements for 2024
+> Show me FPT's income statements for 2024
 > What are HPG's key financial ratios?
-> Get VCB exchange rates for today
 ```
-
-### Project Structure
-
-```
-vnstock-mcp/
-├── pyproject.toml          # Project configuration and dependencies
-├── Dockerfile              # Multi-stage Docker build
-├── docker-compose.yml      # Standalone container deployment
-├── docker-compose.gateway.yml  # Docker MCP Gateway deployment
-├── docker/                 # Gateway configuration
-│   ├── vnstock.yaml        # Server entry for gateway
-│   ├── registry.yaml       # Gateway registry
-│   └── config.yaml         # Gateway config
-├── render.yaml             # Render.com native Python deployment
-├── render-gateway.yaml     # Render.com Docker deployment
-├── src/
-│   └── vnstock_mcp/        # Python package
-│       ├── __init__.py     # Package initialization
-│       ├── server.py       # MCP server (API Layer)
-│       ├── config.py       # Configuration constants
-│       ├── exceptions.py   # Custom exceptions
-│       ├── core/           # Service Layer (business logic)
-│       │   ├── base.py     # BaseService with async patterns
-│       │   ├── financial.py
-│       │   ├── company.py
-│       │   └── fund.py
-│       ├── models/         # Model Layer (result types)
-│       │   ├── base.py     # ServiceResult, DataFrameResult
-│       │   ├── financial.py
-│       │   ├── company.py
-│       │   └── fund.py
-│       └── utils/          # Utility functions
-│           └── data_transform.py
-├── docs/                   # Architecture documentation
-│   ├── ARCHITECTURE.md     # System architecture overview
-│   └── adr/                # Architecture Decision Records
-│       ├── 001-layered-architecture.md
-│       ├── 002-result-objects.md
-│       └── 003-lazy-imports.md
-├── tests/                  # Test suite
-│   ├── __init__.py
-│   └── conftest.py         # Pytest configuration
-├── dist/                   # Built packages
-├── sample questions/       # Usage examples
-├── uv.lock                 # Dependency lock file
-└── README.md               # This file
-```
-
-For detailed architecture documentation, see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
-
-## uv vs uvx: Which to Use?
-
-### **uvx (Recommended for Users)**
-
-- **Purpose**: Run Python packages directly from PyPI
-- **Use case**: End users who just want to use the MCP server
-- **Command**: `uvx vnstock-mcp@latest`
-- **Benefits**:
-  - No local setup required
-  - Automatic dependency management
-  - Isolated execution environment
-
-### **uv (Recommended for Developers)**
-
-- **Purpose**: Python project and package management
-- **Use case**: Developers who want to modify/contribute to the code
-- **Command**: `uv run python src/vnstock_mcp/server.py`
-- **Benefits**:
-  - Full source code access
-  - Development workflow
-  - Ability to make changes
 
 ## Claude Desktop Integration
 
@@ -200,10 +92,48 @@ To use this MCP server with Claude Desktop, add the following configuration to y
 }
 ```
 
+**Method 5: Docker MCP Gateway (simple)**
+
+```json
+{
+  "mcpServers": {
+    "MCP_DOCKER": {
+      "type": "stdio",
+      "command": "docker",
+      "args": ["mcp", "gateway", "run"]
+    }
+  }
+}
+```
+
+**Method 6: Docker MCP Gateway (explicit catalog/registry)**
+
+```json
+{
+  "mcpServers": {
+    "mcp-toolkit-gateway": {
+      "command": "docker",
+      "args": [
+        "run", "-i", "--rm",
+        "-v", "/var/run/docker.sock:/var/run/docker.sock",
+        "-v", "/Users/YOUR_USERNAME/.docker/mcp:/mcp",
+        "docker/mcp-gateway",
+        "--catalog=/mcp/catalogs/vnstock.yaml",
+        "--config=/mcp/config.yaml",
+        "--registry=/mcp/registry.yaml",
+        "--transport=stdio"
+      ]
+    }
+  }
+}
+```
+
 **Note:**
 
-- Replace `YOUR_USERNAME` with your actual username in Method 2
-- Replace `USERNAME` and `PATH_TO` with your actual username and path in Method 3 and 4
+- Replace `YOUR_USERNAME` with your actual username in Methods 2 and 6
+- Replace `USERNAME` and `PATH_TO` with your actual username and path in Methods 3 and 4
+- Methods 5 and 6 require [Docker Desktop](https://www.docker.com/products/docker-desktop/) with the MCP Toolkit enabled. See [Setup Guide](docs/setup-guide.md) for details
+- Method 5 lets Docker manage catalogs automatically; Method 6 pins specific catalog, config, and registry files
 - After quitting and restarting Claude Desktop, if it still can't detect the mcp server, check if `uvx` is in your PATH. If not, add `~/.local/bin` to your PATH:
 
 ```bash
@@ -216,73 +146,32 @@ echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
 source ~/.bashrc
 ```
 
-## Docker
+## Remote MCP Server
 
-### Build the Image
+Connect to a hosted VNStock MCP server deployed on Render (or any cloud provider) without installing anything locally. The remote server exposes a Streamable HTTP endpoint at `/mcp`.
 
-```bash
-docker build -t vnstock-mcp:latest .
-```
+Use the server URL `https://your-app.onrender.com/mcp` when adding the remote MCP server in each client's GUI. Guides per client:
 
-### Run Standalone (HTTP Mode)
+- **Claude Desktop** — Add via Settings > MCP Servers
+- **Claude Code (CLI)** — `claude mcp add vnstock-mcp https://your-app.onrender.com/mcp --transport http`
+- **Perplexity** — Follow [Adding Custom Remote Connectors](https://www.perplexity.ai/help-center/en/articles/13915507-adding-custom-remote-connectors)
 
-```bash
-docker compose up
-```
+**Note:** Replace `your-app.onrender.com` with your actual Render deployment URL and add `/mcp` at the end.
 
-Test with: `curl http://localhost:8001/health`
-
-### Run with Docker MCP Gateway
-
-The server integrates with [Docker MCP Gateway](https://github.com/docker/mcp-gateway) for container-isolated MCP serving.
+You can verify the server is running with a custom health endpoint `/health` like this :
 
 ```bash
-# Start the gateway with vnstock-mcp registered
-docker compose -f docker-compose.gateway.yml up
+curl https://your-app.onrender.com/health
 ```
 
-The gateway listens on port 8811 and starts vnstock-mcp containers on demand.
+## Development
 
-### Run in STDIO Mode
+Setup the docker mcp gateway [Setup Guide](docs/setup-guide.md)
 
-When no `PORT` environment variable is set, the server uses STDIO transport (compatible with Docker MCP Gateway's on-demand container model):
+Project structure, Docker builds, and deployment guides, see [Development Guide](docs/DEVELOPMENT.md).
 
-```bash
-docker run -i --rm vnstock-mcp:latest
-```
-
-### Docker MCP Toolkit (Docker Desktop)
-
-If you have Docker Desktop with the MCP Toolkit extension:
-
-```bash
-# Connect Claude Code to Docker MCP Gateway
-claude mcp add MCP_DOCKER -s user -- docker mcp gateway run
-```
-
-### Deploy to Render (Docker)
-
-A separate Render Blueprint using the Dockerfile is available:
-
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/gahoccode/vnstock-mcp)
-
-Use `render-gateway.yaml` for Docker-based deployment (the existing `render.yaml` uses Render's native Python runtime).
-
-## Publishing to PyPI
-
-For maintainers, use the automated publish script:
-
-```bash
-# Set UV_PUBLISH_TOKEN in .env file, then run:
-uv run dev/publish.py
-```
-
-Or publish manually:
-
-```bash
-uv publish --token $UV_PUBLISH_TOKEN
-```
+Tips on fixing common issues include Quick diagonostic commands,verifying catalogs, registry, validating Claude Config, Authentication and Permission [Troubleshooting Guide](docs/troubleshoot.md)
 
 ## License
 
-This project is part of the vnstock-mcp ecosystem. See the main repository for licensing information.
+This project is wrapper of the vnstock library. See the main repository for licensing information.
