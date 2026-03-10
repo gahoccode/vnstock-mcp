@@ -114,9 +114,13 @@ To use this MCP server with Claude Desktop, add the following configuration to y
     "mcp-toolkit-gateway": {
       "command": "docker",
       "args": [
-        "run", "-i", "--rm",
-        "-v", "/var/run/docker.sock:/var/run/docker.sock",
-        "-v", "/Users/YOUR_USERNAME/.docker/mcp:/mcp",
+        "run",
+        "-i",
+        "--rm",
+        "-v",
+        "/var/run/docker.sock:/var/run/docker.sock",
+        "-v",
+        "/Users/YOUR_USERNAME/.docker/mcp:/mcp",
         "docker/mcp-gateway",
         "--catalog=/mcp/catalogs/vnstock.yaml",
         "--config=/mcp/config.yaml",
@@ -144,6 +148,12 @@ source ~/.zshrc
 # For bash
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
 source ~/.bashrc
+```
+
+Claude Code Integration
+
+```bash
+claude mcp add vnstock-mcp --transport http https://your-app.onrender.com/mcp
 ```
 
 ## Remote MCP Server
