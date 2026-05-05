@@ -18,26 +18,28 @@ class TestFinancialServiceIntegration:
     @pytest.mark.asyncio
     async def test_get_income_statement_real(self, financial_service):
         """Test getting real income statement data."""
-        result = await financial_service.get_income_statement("VCI", "en")
+        result = await financial_service.get_income_statement("VCI")
 
         assert result.success
         assert result.data is not None
         assert len(result.data) > 0
-        assert "yearReport" in result.data.columns
+        assert {"item", "item_id"}.issubset(result.data.columns)
+        assert any(column.isdigit() for column in result.data.columns)
 
     @pytest.mark.asyncio
     async def test_get_balance_sheet_real(self, financial_service):
         """Test getting real balance sheet data."""
-        result = await financial_service.get_balance_sheet("VNM", "en")
+        result = await financial_service.get_balance_sheet("VNM")
 
         assert result.success
         assert result.data is not None
-        assert "yearReport" in result.data.columns
+        assert {"item", "item_id"}.issubset(result.data.columns)
+        assert any(column.isdigit() for column in result.data.columns)
 
     @pytest.mark.asyncio
     async def test_get_cash_flow_real(self, financial_service):
         """Test getting real cash flow data."""
-        result = await financial_service.get_cash_flow("HPG", "en")
+        result = await financial_service.get_cash_flow("HPG")
 
         assert result.success
         assert result.data is not None
@@ -45,15 +47,15 @@ class TestFinancialServiceIntegration:
     @pytest.mark.asyncio
     async def test_get_financial_ratios_real(self, financial_service):
         """Test getting real financial ratios data."""
-        result = await financial_service.get_financial_ratios("VCI", "en")
+        result = await financial_service.get_financial_ratios("VCI")
 
         assert result.success
         assert result.data is not None
 
     @pytest.mark.asyncio
-    async def test_get_income_statement_vietnamese(self, financial_service):
-        """Test getting income statement with Vietnamese language."""
-        result = await financial_service.get_income_statement("VCI", "vi")
+    async def test_get_income_statement_provider_labels(self, financial_service):
+        """Test getting income statement with provider-native labels."""
+        result = await financial_service.get_income_statement("VCI")
 
         assert result.success
         assert result.data is not None
@@ -61,7 +63,7 @@ class TestFinancialServiceIntegration:
     @pytest.mark.asyncio
     async def test_get_income_statement_invalid_symbol(self, financial_service):
         """Test getting income statement for invalid symbol."""
-        result = await financial_service.get_income_statement("INVALID_SYMBOL_XYZ", "en")
+        result = await financial_service.get_income_statement("INVALID_SYMBOL_XYZ")
 
         # Should return error result
         assert not result.success

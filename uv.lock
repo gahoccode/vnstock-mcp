@@ -2858,21 +2858,21 @@ wheels = [
 
 [[package]]
 name = "vnai"
-version = "2.3.9"
+version = "2.4.8"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cffi" },
     { name = "psutil" },
     { name = "requests" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ac/8f/3160985ef3ca095dc2f95d99b5595dcce1e97fad520086d06bc820835e6f/vnai-2.3.9.tar.gz", hash = "sha256:cfe20abab5dfe1a0523ebafabc68b9404820a8ac5e5cf01a794db63d34bf998c", size = 36613, upload-time = "2026-01-21T17:46:30.59Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/1e/e8/00d87cc84ee005471d9a9c903e7483953d5529a90279a8a2cd2a0cefe660/vnai-2.4.8.tar.gz", hash = "sha256:881a15643ae349ba4bcbfe6c42bf1943b9faf5e2b4f918d2d12aa104daaf38bb", size = 39822, upload-time = "2026-04-27T05:29:41.769Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/83/5f/4d7e89d8d422dca658815e7fddf24a2bb0b6d3b1e43e2b91a707062491d9/vnai-2.3.9-py3-none-any.whl", hash = "sha256:9de84f83cfd1bc3303a018f3de5c4c99e908766a6770899d8de052283d8dec09", size = 44844, upload-time = "2026-01-21T17:46:28.927Z" },
+    { url = "https://files.pythonhosted.org/packages/f2/ac/3ce73749ad41ec939f04aeea4450f9e8bef6c5ae667bb8631f893fb67d5e/vnai-2.4.8-py3-none-any.whl", hash = "sha256:5961dfcda65e705f7587a8b2d16854106fb8cd021606a5a42cf28da8d0ae79fe", size = 48274, upload-time = "2026-04-27T05:29:40.42Z" },
 ]
 
 [[package]]
 name = "vnstock"
-version = "3.4.2"
+version = "4.0.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "beautifulsoup4" },
@@ -2882,15 +2882,16 @@ dependencies = [
     { name = "pandas" },
     { name = "psutil" },
     { name = "pydantic" },
+    { name = "pytz" },
     { name = "requests" },
     { name = "seaborn" },
     { name = "tenacity" },
     { name = "vnai" },
     { name = "vnstock-ezchart" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ae/8f/31f914fa3e399e973f7659d5164ee78eb93d4f944375e4e855e403fc4612/vnstock-3.4.2.tar.gz", hash = "sha256:9d98dcadfba9f1be42cf2ca61858ddd722fdcefb183dc55a713b069a087ad96b", size = 250098, upload-time = "2026-02-01T08:27:42.748Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/e6/4a/3679bb40622eb46d56085a10d8ff41faec122261c84fbfeef4bff7b7a1dc/vnstock-4.0.2.tar.gz", hash = "sha256:a60052f1a8b2566e375c538456199c4d1d6e58fdd32e6e2ff790b51aece84041", size = 251523, upload-time = "2026-04-28T11:10:55.14Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0f/86/d538895d1e2d092df80ccd80a6249814df24202b1146cb2be2c0d28ef03e/vnstock-3.4.2-py3-none-any.whl", hash = "sha256:d5af31b2cb79e4bf0433ca5ae7e211cfaad4f46359f0f4592670c38219c5897a", size = 277467, upload-time = "2026-02-01T08:27:41.241Z" },
+    { url = "https://files.pythonhosted.org/packages/b5/81/8ac4ffc5104d70e5fdf04125ac3913df380ae0d534d756db55319c0e570f/vnstock-4.0.2-py3-none-any.whl", hash = "sha256:4a32c169b934bc130dcb0267ffd01635d3e7e3f12cf485c82909e38a9cdf9489", size = 277380, upload-time = "2026-04-28T11:10:53.54Z" },
 ]
 
 [[package]]
@@ -2927,6 +2928,7 @@ dev = [
     { name = "pytest" },
     { name = "pytest-asyncio" },
     { name = "ruff" },
+    { name = "vulture" },
 ]
 
 [package.metadata]
@@ -2936,7 +2938,7 @@ requires-dist = [
     { name = "pandas" },
     { name = "python-dotenv", specifier = ">=1.0.0" },
     { name = "pytz", specifier = ">=2025.2" },
-    { name = "vnstock", specifier = ">=3.3.0" },
+    { name = "vnstock", specifier = ">=4.0.2,<5" },
 ]
 
 [package.metadata.requires-dev]
@@ -2944,6 +2946,19 @@ dev = [
     { name = "pytest", specifier = ">=7.0.0" },
     { name = "pytest-asyncio", specifier = ">=0.21.0" },
     { name = "ruff", specifier = ">=0.1.0" },
+    { name = "vulture", specifier = ">=2.14" },
+]
+
+[[package]]
+name = "vulture"
+version = "2.16"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "tomli", marker = "python_full_version < '3.11'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/66/3e/4d08c5903b2c0c70cad583c170cc4a663fc6a61e2ad00b711fcda61358cd/vulture-2.16.tar.gz", hash = "sha256:f8d9f6e2af03011664a3c6c240c9765b3f392917d3135fddca6d6a68d359f717", size = 52680, upload-time = "2026-03-25T14:41:27.141Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f5/be/f935130312330614811dae2ea9df3f395f6d63889eb6c2e68c14507152ee/vulture-2.16-py3-none-any.whl", hash = "sha256:6e0f1c312cef1c87856957e5c2ca9608834a7c794c2180477f30bf0e4cc58eee", size = 26993, upload-time = "2026-03-25T14:41:26.21Z" },
 ]
 
 [[package]]

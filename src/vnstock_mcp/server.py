@@ -21,7 +21,7 @@ fund_service = FundService()
 
 
 @mcp.custom_route("/health", methods=["GET"])
-async def health_check(request):
+async def health_check(_request):
     """Health check endpoint for monitoring and load balancer health probes."""
     return JSONResponse({
         "status": "healthy",
@@ -34,70 +34,66 @@ async def health_check(request):
 
 
 @mcp.tool()
-async def get_income_statement(symbol: str, lang: str = "en") -> str:
+async def get_income_statement(symbol: str) -> str:
     """
-    Get annual income statement (profit & loss) for Vietnamese stocks with chronological year ordering.
+    Get annual income statement (profit & loss) for Vietnamese stocks.
 
     Args:
         symbol: Stock ticker symbol (e.g., 'VCI', 'VNM', 'HPG')
-        lang: Language - 'en' (English) or 'vi' (Vietnamese')
 
     Returns:
-        JSON string with annual income statement data including revenue, expenses,
-        profit metrics, and earnings per share (EPS) for multiple years, sorted chronologically
+        JSON string with vnstock 4.x KBS income statement rows including
+        item, item_id, and annual period columns
     """
-    result = await financial_service.get_income_statement(symbol.upper(), lang)
+    result = await financial_service.get_income_statement(symbol.upper())
     return result.to_json()
 
 
 @mcp.tool()
-async def get_balance_sheet(symbol: str, lang: str = "en") -> str:
+async def get_balance_sheet(symbol: str) -> str:
     """
-    Get annual balance sheet for Vietnamese stocks with chronological year ordering.
+    Get annual balance sheet for Vietnamese stocks.
 
     Args:
         symbol: Stock ticker symbol (e.g., 'VCI', 'VNM', 'HPG')
-        lang: Language - 'en' (English) or 'vi' (Vietnamese)
 
     Returns:
-        JSON string with annual balance sheet data including assets, liabilities,
-        equity, and detailed financial position metrics for multiple years, sorted chronologically
+        JSON string with vnstock 4.x KBS balance sheet rows including
+        item, item_id, and annual period columns
     """
-    result = await financial_service.get_balance_sheet(symbol.upper(), lang)
+    result = await financial_service.get_balance_sheet(symbol.upper())
     return result.to_json()
 
 
 @mcp.tool()
-async def get_cash_flow(symbol: str, lang: str = "en") -> str:
+async def get_cash_flow(symbol: str) -> str:
     """
-    Get annual cash flow statement for Vietnamese stocks with chronological year ordering.
+    Get annual cash flow statement for Vietnamese stocks.
 
     Args:
         symbol: Stock ticker symbol (e.g., 'VCI', 'VNM', 'HPG')
-        lang: Language - 'en' (English) or 'vi' (Vietnamese)
 
     Returns:
-        JSON string with annual cash flow data including operating, investing,
-        and financing activities for multiple years, sorted chronologically
+        JSON string with vnstock 4.x KBS cash flow rows including
+        item, item_id, and annual period columns
     """
-    result = await financial_service.get_cash_flow(symbol.upper(), lang)
+    result = await financial_service.get_cash_flow(symbol.upper())
     return result.to_json()
 
 
 @mcp.tool()
-async def get_financial_ratios(symbol: str, lang: str = "en") -> str:
+async def get_financial_ratios(symbol: str) -> str:
     """
-    Get annual financial ratios and metrics for Vietnamese stocks with chronological year ordering.
+    Get annual financial ratios and metrics for Vietnamese stocks.
 
     Args:
         symbol: Stock ticker symbol (e.g., 'VCI', 'VNM', 'HPG')
-        lang: Language - 'en' (English) or 'vi' (Vietnamese)
 
     Returns:
-        JSON string with annual financial ratios including P/B (Price-to-Book),
-        ROE (Return on Equity), and other key financial health indicators, sorted chronologically
+        JSON string with vnstock 4.x KBS ratio rows including item,
+        item_id, and annual period columns
     """
-    result = await financial_service.get_financial_ratios(symbol.upper(), lang)
+    result = await financial_service.get_financial_ratios(symbol.upper())
     return result.to_json()
 
 
@@ -120,7 +116,6 @@ async def get_company_info(
                   'subsidiaries' - Subsidiaries and associated companies (filter: 'all', 'subsidiary')
                   'events' - Corporate events and announcements
                   'news' - Company news and updates
-                  'reports' - Analysis reports
                   'ratio_summary' - Financial ratios summary
                   'trading_stats' - Trading statistics and market data
         lang: Language - 'en' (English) or 'vi' (Vietnamese)

@@ -1,5 +1,7 @@
 """Company information service - handles company overview, shareholders, officers, etc."""
 
+from typing import Any
+
 from vnstock_mcp.config import VALID_INFO_TYPES
 from vnstock_mcp.core.base import BaseService
 from vnstock_mcp.models.company import CompanyInfoResult
@@ -26,7 +28,6 @@ class CompanyService(BaseService):
                       'subsidiaries' - Subsidiaries and associated companies
                       'events' - Corporate events and announcements
                       'news' - Company news and updates
-                      'reports' - Analysis reports
                       'ratio_summary' - Financial ratios summary
                       'trading_stats' - Trading statistics and market data
             lang: Language - 'en' (English) or 'vi' (Vietnamese)
@@ -43,10 +44,13 @@ class CompanyService(BaseService):
 
         try:
             # Lazy import to avoid circular dependency
-            from vnstock.explorer.vci import Company
+            from vnstock import Company
 
-            # Initialize Company with VCI source
-            company = Company(symbol=symbol.upper())
+            company = Company(
+                source="VCI",
+                symbol=symbol.upper(),
+                show_log=False,
+            )
 
             # Fetch the requested company information
             df = await self._fetch_by_info_type(company, info_type)
@@ -61,7 +65,7 @@ class CompanyService(BaseService):
                 f"Error fetching {info_type} for {symbol}: {e}"
             )
 
-    async def _fetch_by_info_type(self, company, info_type: str):
+    async def _fetch_by_info_type(self, company: Any, info_type: str) -> Any:
         """Fetch data by info type using the appropriate Company method."""
         fetch_methods = {
             "overview": lambda: company.overview(),
@@ -70,7 +74,6 @@ class CompanyService(BaseService):
             "subsidiaries": lambda: company.subsidiaries(filter_by="all"),
             "events": lambda: company.events(),
             "news": lambda: company.news(),
-            "reports": lambda: company.reports(),
             "ratio_summary": lambda: company.ratio_summary(),
             "trading_stats": lambda: company.trading_stats(),
         }

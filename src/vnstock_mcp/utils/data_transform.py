@@ -1,8 +1,39 @@
 """DataFrame transformation utilities."""
 
-from typing import Any
-
 import pandas as pd
+
+
+def sort_financial_period_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Order vnstock 4.x financial period columns with metadata first.
+
+    Args:
+        df: Financial statement or ratio DataFrame
+
+    Returns:
+        DataFrame with metadata columns first and period columns descending
+    """
+    if df.empty:
+        return df
+
+    metadata_columns = [
+        column for column in ["item", "item_en", "item_id"] if column in df.columns
+    ]
+    period_columns = sorted(
+        [
+            column
+            for column in df.columns
+            if isinstance(column, str) and column.isdigit()
+        ],
+        reverse=True,
+    )
+    remaining_columns = [
+        column
+        for column in df.columns
+        if column not in metadata_columns and column not in period_columns
+    ]
+
+    return df[metadata_columns + period_columns + remaining_columns]
 
 
 def sort_by_year(df: pd.DataFrame, year_column: str = "yearReport") -> pd.DataFrame:
@@ -42,37 +73,6 @@ def dataframe_to_json(
     if df is None or df.empty:
         return ""
     return df.to_json(orient=orient, date_format=date_format, indent=indent)
-
-
-def flatten_dataframe(
-    df: pd.DataFrame,
-    separator: str = "_",
-    handle_duplicates: bool = True,
-    drop_levels: int = 0,
-) -> pd.DataFrame:
-    """
-    Flatten a MultiIndex DataFrame to single-level columns.
-
-    Args:
-        df: DataFrame with potentially MultiIndex columns
-        separator: Separator for joined column names
-        handle_duplicates: Whether to handle duplicate column names
-        drop_levels: Number of levels to drop from MultiIndex
-
-    Returns:
-        DataFrame with flattened column names
-    """
-    if not isinstance(df.columns, pd.MultiIndex):
-        return df
-
-    from vnstock.core.utils.transform import flatten_hierarchical_index
-
-    return flatten_hierarchical_index(
-        df,
-        separator=separator,
-        handle_duplicates=handle_duplicates,
-        drop_levels=drop_levels,
-    )
 
 
 def safe_to_json_string(

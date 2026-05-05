@@ -24,6 +24,22 @@ uvx vnstock-mcp@latest
 > What are HPG's key financial ratios?
 ```
 
+## Data Sources
+
+This server uses vnstock 4.x public adapters:
+
+- Financial statements and ratios use `Finance(source="KBS")` for consistent `item`, `item_id`, and period-column output. Financial labels are provider-native; use `item_id` for stable metric identification.
+- Company information uses `Company(source="VCI")` because `ratio_summary` and `trading_stats` are VCI-specific compatibility methods.
+- Mutual fund data uses the top-level `Fund` adapter.
+
+Financial statement and ratio responses are returned as metric rows with period columns:
+
+```text
+item | item_id | 2025 | 2024 | 2023 | 2022
+```
+
+The `reports` company info type is not supported in vnstock 4.x and has been removed.
+
 ## Claude Desktop Integration
 
 To use this MCP server with Claude Desktop, add the following configuration to your Claude Desktop config file (`~/Library/Application Support/Claude/claude_desktop_config.json` on macOS):
@@ -184,4 +200,8 @@ Tips on fixing common issues include Quick diagonostic commands,verifying catalo
 
 ## License
 
-This project is wrapper of the vnstock library. See the main repository for licensing information.
+This project is wrapper of the vnstock library. See the main repository and documentation for licensing and API information:
+
+- [vnstock GitHub repository](https://github.com/thinh-vu/vnstock)
+- [vnstock 4.x release notes](https://vnstocks.com/blog/phat-hanh-vnstock-the-he-4-0-giao-dien-hop-nhat)
+- [vnstock architecture documentation](https://vnstocks.com/docs/vnstock-data/kien-truc-thu-vien)

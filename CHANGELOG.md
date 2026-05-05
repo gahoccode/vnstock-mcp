@@ -7,6 +7,58 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **vnstock 4.x migration** - Updated the data layer from vnstock 3.x explorer imports to vnstock 4.x top-level adapters.
+  - Financial tools now use `Finance(source="KBS")` for consistent statement and ratio output.
+  - Financial tools no longer expose `lang` because vnstock 4.x KBS financial calls ignore language parameters; use `item_id` for stable metric identification.
+  - Company tools now use `Company(source="VCI")` to keep `ratio_summary` and `trading_stats` support.
+  - Fund tools now use the top-level `Fund` adapter.
+  - Financial statement and ratio JSON now follows vnstock 4.x metric-row shape: `item`, `item_id`, then period columns such as `2025`, `2024`, `2023`, `2022`.
+- **Dependency updates** - Updated `vnstock>=3.3.0` to `vnstock>=4.0.2,<5`, refreshed `uv.lock`, and regenerated `requirements.txt`.
+- **Tooling configuration** - Added `vulture` to the dev dependency group and configured `[tool.vulture]` in `pyproject.toml`.
+
+### Removed
+- **`reports` company info type** - Removed because vnstock 4.0.2 no longer exposes a working `Company.reports()` method through VCI or KBS.
+
+### Scope of Impact
+- **Modified files**:
+  - `src/vnstock_mcp/core/financial.py`
+    - `get_income_statement()` - top-level `Finance`, KBS source, removed `lang`, vnstock 4.x period-column ordering
+    - `get_balance_sheet()` - top-level `Finance`, KBS source, removed `lang`, vnstock 4.x period-column ordering
+    - `get_cash_flow()` - top-level `Finance`, KBS source, removed `lang`, vnstock 4.x period-column ordering
+    - `get_financial_ratios()` - top-level `Finance`, KBS source, removed `lang`, removed MultiIndex flattening
+  - `src/vnstock_mcp/core/company.py`
+    - `get_company_info()` - top-level `Company`, VCI source
+    - `_fetch_by_info_type()` - removed `reports` dispatch
+  - `src/vnstock_mcp/core/fund.py`
+    - `get_fund_listing()` - top-level `Fund`
+    - `search_funds()` - top-level `Fund`
+    - `get_fund_nav_report()` - top-level `Fund`
+    - `get_fund_top_holdings()` - top-level `Fund`
+    - `get_fund_industry_allocation()` - top-level `Fund`
+    - `get_fund_asset_allocation()` - top-level `Fund`
+  - `src/vnstock_mcp/config.py`
+    - `VALID_INFO_TYPES` - removed `reports`
+  - `src/vnstock_mcp/server.py`
+    - Financial tool signatures - removed `lang`
+    - `get_company_info()` docstring - removed `reports`
+  - `src/vnstock_mcp/utils/data_transform.py`
+    - `sort_financial_period_columns()` - added helper for vnstock 4.x period columns
+    - `flatten_dataframe()` - removed unused vnstock 3.x MultiIndex helper
+  - `tests/unit/test_financial_service.py`, `tests/unit/test_company_service.py`, `tests/unit/test_fund_service.py`
+    - Updated unit tests for top-level adapters, source selection, financial shape, and `reports` removal
+- **Documentation updated**: `README.md`, `llms.txt`, `docs/ARCHITECTURE.md`, `CHANGELOG.md`
+
+```mermaid
+flowchart LR
+    MCP[MCP tools] --> Financial[FinancialService]
+    MCP --> Company[CompanyService]
+    MCP --> Fund[FundService]
+    Financial --> KBS["vnstock.Finance<br/>source=KBS"]
+    Company --> VCI["vnstock.Company<br/>source=VCI"]
+    Fund --> FMarket["vnstock.Fund"]
+```
+
 ### Added
 - **Docker MCP Gateway Integration** - Containerized deployment with Docker MCP Gateway support
   - `Dockerfile` - Multi-stage build with Python 3.12-slim, non-root user, health check

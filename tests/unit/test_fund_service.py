@@ -1,8 +1,7 @@
-"""Unit tests for FundService."""
-
-import pytest
 from unittest.mock import MagicMock, patch
+
 import pandas as pd
+import pytest
 
 from vnstock_mcp.core.fund import FundService
 
@@ -34,7 +33,7 @@ class TestFundServiceGetFundListing:
 
         with patch.dict(
             "sys.modules",
-            {"vnstock.explorer.fmarket.fund": MagicMock(Fund=MagicMock(return_value=mock_fund))}
+            {"vnstock": MagicMock(Fund=MagicMock(return_value=mock_fund))}
         ):
             result = await fund_service.get_fund_listing("")
 
@@ -50,7 +49,7 @@ class TestFundServiceGetFundListing:
 
         with patch.dict(
             "sys.modules",
-            {"vnstock.explorer.fmarket.fund": MagicMock(Fund=MagicMock(return_value=mock_fund))}
+            {"vnstock": MagicMock(Fund=MagicMock(return_value=mock_fund))}
         ):
             result = await fund_service.get_fund_listing("STOCK")
 
@@ -73,7 +72,7 @@ class TestFundServiceGetFundListing:
 
         with patch.dict(
             "sys.modules",
-            {"vnstock.explorer.fmarket.fund": MagicMock(Fund=MagicMock(return_value=mock_fund))}
+            {"vnstock": MagicMock(Fund=MagicMock(return_value=mock_fund))}
         ):
             result = await fund_service.get_fund_listing("")
 
@@ -97,7 +96,7 @@ class TestFundServiceSearchFunds:
 
         with patch.dict(
             "sys.modules",
-            {"vnstock.explorer.fmarket.fund": MagicMock(Fund=MagicMock(return_value=mock_fund))}
+            {"vnstock": MagicMock(Fund=MagicMock(return_value=mock_fund))}
         ):
             result = await fund_service.search_funds("SSI")
 
@@ -112,7 +111,7 @@ class TestFundServiceSearchFunds:
 
         with patch.dict(
             "sys.modules",
-            {"vnstock.explorer.fmarket.fund": MagicMock(Fund=MagicMock(return_value=mock_fund))}
+            {"vnstock": MagicMock(Fund=MagicMock(return_value=mock_fund))}
         ):
             result = await fund_service.search_funds("NOTFOUND")
 
@@ -136,7 +135,7 @@ class TestFundServiceGetFundNavReport:
 
         with patch.dict(
             "sys.modules",
-            {"vnstock.explorer.fmarket.fund": MagicMock(Fund=MagicMock(return_value=mock_fund))}
+            {"vnstock": MagicMock(Fund=MagicMock(return_value=mock_fund))}
         ):
             result = await fund_service.get_fund_nav_report("SSISCA")
 
@@ -151,7 +150,7 @@ class TestFundServiceGetFundNavReport:
 
         with patch.dict(
             "sys.modules",
-            {"vnstock.explorer.fmarket.fund": MagicMock(Fund=MagicMock(return_value=mock_fund))}
+            {"vnstock": MagicMock(Fund=MagicMock(return_value=mock_fund))}
         ):
             await fund_service.get_fund_nav_report("ssisca")
 
@@ -174,7 +173,7 @@ class TestFundServiceGetFundTopHoldings:
 
         with patch.dict(
             "sys.modules",
-            {"vnstock.explorer.fmarket.fund": MagicMock(Fund=MagicMock(return_value=mock_fund))}
+            {"vnstock": MagicMock(Fund=MagicMock(return_value=mock_fund))}
         ):
             result = await fund_service.get_fund_top_holdings("SSISCA")
 
@@ -198,7 +197,7 @@ class TestFundServiceGetFundIndustryAllocation:
 
         with patch.dict(
             "sys.modules",
-            {"vnstock.explorer.fmarket.fund": MagicMock(Fund=MagicMock(return_value=mock_fund))}
+            {"vnstock": MagicMock(Fund=MagicMock(return_value=mock_fund))}
         ):
             result = await fund_service.get_fund_industry_allocation("SSISCA")
 
@@ -221,7 +220,7 @@ class TestFundServiceGetFundAssetAllocation:
 
         with patch.dict(
             "sys.modules",
-            {"vnstock.explorer.fmarket.fund": MagicMock(Fund=MagicMock(return_value=mock_fund))}
+            {"vnstock": MagicMock(Fund=MagicMock(return_value=mock_fund))}
         ):
             result = await fund_service.get_fund_asset_allocation("SSISCA")
 

@@ -21,7 +21,6 @@ VALID_INFO_TYPES = frozenset([
     "subsidiaries",
     "events",
     "news",
-    "reports",
     "ratio_summary",
     "trading_stats",
 ])

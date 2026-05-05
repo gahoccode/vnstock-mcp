@@ -10,11 +10,10 @@ The vnstock library has a complex import structure that can cause circular depen
 
 ```python
 # Module-level imports (problematic)
-from vnstock.explorer.vci import Finance, Company
-from vnstock.explorer.fmarket.fund import Fund
+from vnstock import Company, Finance, Fund
 
 async def get_income_statement(symbol: str):
-    finance = Finance(symbol=symbol)
+    finance = Finance(source="KBS", symbol=symbol)
     # ...
 ```
 
@@ -30,9 +29,9 @@ We moved vnstock imports inside service methods (lazy imports):
 ```python
 async def get_income_statement(self, symbol: str) -> IncomeStatementResult:
     # Lazy import inside method
-    from vnstock.explorer.vci import Finance
+    from vnstock import Finance
 
-    finance = Finance(symbol=symbol.upper())
+    finance = Finance(source="KBS", symbol=symbol.upper())
     # ...
 ```
 
@@ -44,10 +43,9 @@ vnstock's internal module structure can cause circular imports:
 
 ```
 vnstock.__init__.py
-    → vnstock.explorer.vci.__init__.py
-        → vnstock.explorer.vci.finance.py
-            → vnstock.core.utils.transform.py
-                → (potential circular reference back)
+    → vnstock API adapters
+        → source-specific clients
+            → utility modules and network setup
 ```
 
 By importing only when needed, we break these cycles at the application level.
@@ -73,9 +71,9 @@ Only the necessary vnstock modules are loaded:
 
 | Tool Called | Modules Loaded |
 |-------------|---------------|
-| `get_income_statement` | `vnstock.explorer.vci.Finance` |
-| `get_fund_listing` | `vnstock.explorer.fmarket.fund.Fund` |
-| `get_company_info` | `vnstock.explorer.vci.Company` |
+| `get_income_statement` | `vnstock.Finance` |
+| `get_fund_listing` | `vnstock.Fund` |
+| `get_company_info` | `vnstock.Company` |
 
 ## Consequences
 
@@ -99,49 +97,40 @@ Only the necessary vnstock modules are loaded:
 ```python
 # core/financial.py
 class FinancialService(BaseService):
-    async def get_income_statement(self, symbol: str, lang: str = "en"):
+    async def get_income_statement(self, symbol: str):
         # Lazy import at method level
-        from vnstock.explorer.vci import Finance
+        from vnstock import Finance
 
-        finance = Finance(symbol=symbol.upper())
+        finance = Finance(
+            source="KBS",
+            symbol=symbol.upper(),
+            period="year",
+            get_all=True,
+            show_log=False,
+        )
         df = await self.run_sync(
-            lambda: finance.income_statement(period="year", lang=lang)
+            lambda: finance.income_statement(period="year")
         )
         # ...
-```
-
-### Utils Module
-
-The `utils/data_transform.py` module also uses lazy imports for vnstock utilities:
-
-```python
-def flatten_dataframe(df: pd.DataFrame, ...):
-    if not isinstance(df.columns, pd.MultiIndex):
-        return df
-
-    # Lazy import when actually needed
-    from vnstock.core.utils.transform import flatten_hierarchical_index
-
-    return flatten_hierarchical_index(df, ...)
 ```
 
 ## What NOT to Do
 
 ```python
 # ❌ Module-level import (causes issues)
-from vnstock.explorer.vci import Finance
+from vnstock import Finance
 
 class FinancialService(BaseService):
     async def get_income_statement(self, symbol: str):
-        finance = Finance(symbol=symbol)
+        finance = Finance(source="KBS", symbol=symbol)
 ```
 
 ```python
 # ✅ Lazy import inside method
 class FinancialService(BaseService):
     async def get_income_statement(self, symbol: str):
-        from vnstock.explorer.vci import Finance
-        finance = Finance(symbol=symbol)
+        from vnstock import Finance
+        finance = Finance(source="KBS", symbol=symbol)
 ```
 
 ## Alternatives Considered
@@ -154,8 +143,7 @@ Would load all vnstock modules on any import, defeating the purpose.
 
 ```python
 # lib/vnstock_wrapper.py
-from vnstock.explorer.vci import Finance, Company
-from vnstock.explorer.fmarket.fund import Fund
+from vnstock import Company, Finance, Fund
 ```
 
 Would still cause the same circular import issues.
@@ -165,7 +153,7 @@ Would still cause the same circular import issues.
 ```python
 import importlib
 
-Finance = importlib.import_module("vnstock.explorer.vci").Finance
+Finance = importlib.import_module("vnstock").Finance
 ```
 
 More verbose with no additional benefit over the standard import statement.

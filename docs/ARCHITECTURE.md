@@ -71,7 +71,7 @@ flowchart TB
 
     subgraph Support["Support Modules"]
         Config["config.py<br/>Constants & Valid params"]
-        Utils["utils/data_transform.py<br/>sort_by_year(), dataframe_to_json()"]
+        Utils["utils/data_transform.py<br/>period ordering, JSON helpers"]
         Exceptions["exceptions.py<br/>Custom exceptions"]
     end
 
@@ -132,17 +132,17 @@ flowchart TB
 
 **Financial Service** (`core/financial.py`):
 - 4 methods for financial statements
-- Uses `vnstock.explorer.vci.Finance` class
-- Applies `sort_by_year()` transformation
+- Uses top-level `vnstock.Finance` with `source="KBS"`
+- Returns vnstock 4.x metric rows with `item`, `item_id`, and period columns
 
 **Company Service** (`core/company.py`):
-- 1 method with 9 info types
-- Uses `vnstock.explorer.vci.Company` class
+- 1 method with 8 info types
+- Uses top-level `vnstock.Company` with `source="VCI"`
 - Validates `info_type` against `VALID_INFO_TYPES`
 
 **Fund Service** (`core/fund.py`):
 - 6 methods for fund data
-- Uses `vnstock.explorer.fmarket.fund.Fund` class
+- Uses top-level `vnstock.Fund` class
 - Validates `fund_type` against `VALID_FUND_TYPES`
 
 ### 3. Model Layer (`models/`)
@@ -245,7 +245,7 @@ sequenceDiagram
     Vnstock-->>Service: DataFrame
     deactivate Vnstock
 
-    Service->>Service: Transform (sort_by_year)
+    Service->>Service: Transform financial period columns
     Service->>Result: Create success_result(df)
     Result-->>Service: Typed Result object
 
@@ -308,7 +308,7 @@ Imports from vnstock are done inside service methods, not at module level, to av
 ```python
 # Inside service methods (not module level)
 async def get_income_statement(self, symbol: str):
-    from vnstock.explorer.vci import Finance  # Lazy import
+    from vnstock import Finance  # Lazy import
     # ...
 ```
 

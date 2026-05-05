@@ -36,7 +36,7 @@ class FundService(BaseService):
 
         try:
             # Lazy import to avoid circular dependency
-            from vnstock.explorer.fmarket.fund import Fund
+            from vnstock import Fund
 
             # Initialize Fund with lazy loading
             fund = Fund()
@@ -69,7 +69,7 @@ class FundService(BaseService):
         """
         try:
             # Lazy import to avoid circular dependency
-            from vnstock.explorer.fmarket.fund import Fund
+            from vnstock import Fund
 
             # Initialize Fund with lazy loading
             fund = Fund()
@@ -102,7 +102,7 @@ class FundService(BaseService):
         """
         try:
             # Lazy import to avoid circular dependency
-            from vnstock.explorer.fmarket.fund import Fund
+            from vnstock import Fund
 
             # Initialize Fund with lazy loading
             fund = Fund()
@@ -137,7 +137,7 @@ class FundService(BaseService):
         """
         try:
             # Lazy import to avoid circular dependency
-            from vnstock.explorer.fmarket.fund import Fund
+            from vnstock import Fund
 
             # Initialize Fund with lazy loading
             fund = Fund()
@@ -172,7 +172,7 @@ class FundService(BaseService):
         """
         try:
             # Lazy import to avoid circular dependency
-            from vnstock.explorer.fmarket.fund import Fund
+            from vnstock import Fund
 
             # Initialize Fund with lazy loading
             fund = Fund()
@@ -207,7 +207,7 @@ class FundService(BaseService):
         """
         try:
             # Lazy import to avoid circular dependency
-            from vnstock.explorer.fmarket.fund import Fund
+            from vnstock import Fund
 
             # Initialize Fund with lazy loading
             fund = Fund()

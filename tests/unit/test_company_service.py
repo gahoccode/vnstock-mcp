@@ -1,8 +1,7 @@
-"""Unit tests for CompanyService."""
-
-import pytest
 from unittest.mock import MagicMock, patch
+
 import pandas as pd
+import pytest
 
 from vnstock_mcp.core.company import CompanyService
 
@@ -34,7 +33,7 @@ class TestCompanyServiceGetCompanyInfo:
 
         with patch.dict(
             "sys.modules",
-            {"vnstock.explorer.vci": MagicMock(Company=MagicMock(return_value=mock_company))}
+            {"vnstock": MagicMock(Company=MagicMock(return_value=mock_company))}
         ):
             result = await company_service.get_company_info("VCI", "overview", "en")
 
@@ -54,7 +53,7 @@ class TestCompanyServiceGetCompanyInfo:
 
         with patch.dict(
             "sys.modules",
-            {"vnstock.explorer.vci": MagicMock(Company=MagicMock(return_value=mock_company))}
+            {"vnstock": MagicMock(Company=MagicMock(return_value=mock_company))}
         ):
             result = await company_service.get_company_info("VCI", "shareholders", "en")
 
@@ -74,7 +73,7 @@ class TestCompanyServiceGetCompanyInfo:
 
         with patch.dict(
             "sys.modules",
-            {"vnstock.explorer.vci": MagicMock(Company=MagicMock(return_value=mock_company))}
+            {"vnstock": MagicMock(Company=MagicMock(return_value=mock_company))}
         ):
             result = await company_service.get_company_info("VCI", "officers", "en")
 
@@ -90,6 +89,14 @@ class TestCompanyServiceGetCompanyInfo:
         assert "Invalid info_type" in result.error_message
 
     @pytest.mark.asyncio
+    async def test_reports_is_not_supported(self, company_service):
+        """Test reports is rejected because vnstock 4.x Company has no reports method."""
+        result = await company_service.get_company_info("VCI", "reports", "en")
+
+        assert not result.success
+        assert "Invalid info_type" in result.error_message
+
+    @pytest.mark.asyncio
     async def test_empty_data(self, company_service):
         """Test handling of empty data."""
         mock_company = MagicMock()
@@ -97,7 +104,7 @@ class TestCompanyServiceGetCompanyInfo:
 
         with patch.dict(
             "sys.modules",
-            {"vnstock.explorer.vci": MagicMock(Company=MagicMock(return_value=mock_company))}
+            {"vnstock": MagicMock(Company=MagicMock(return_value=mock_company))}
         ):
             result = await company_service.get_company_info("INVALID", "overview", "en")
 
@@ -109,7 +116,7 @@ class TestCompanyServiceGetCompanyInfo:
         """Test exception handling."""
         with patch.dict(
             "sys.modules",
-            {"vnstock.explorer.vci": MagicMock(Company=MagicMock(side_effect=Exception("API Error")))}
+            {"vnstock": MagicMock(Company=MagicMock(side_effect=Exception("API Error")))}
         ):
             result = await company_service.get_company_info("VCI", "overview", "en")
 
@@ -126,7 +133,6 @@ class TestCompanyServiceGetCompanyInfo:
             "subsidiaries",
             "events",
             "news",
-            "reports",
             "ratio_summary",
             "trading_stats",
         ]
@@ -136,14 +142,30 @@ class TestCompanyServiceGetCompanyInfo:
             # Set up all methods to return a valid DataFrame
             for method in [
                 "overview", "shareholders", "officers", "subsidiaries",
-                "events", "news", "reports", "ratio_summary", "trading_stats"
+                "events", "news", "ratio_summary", "trading_stats"
             ]:
                 getattr(mock_company, method).return_value = pd.DataFrame({"test": [1]})
 
             with patch.dict(
                 "sys.modules",
-                {"vnstock.explorer.vci": MagicMock(Company=MagicMock(return_value=mock_company))}
+                {"vnstock": MagicMock(Company=MagicMock(return_value=mock_company))}
             ):
                 result = await company_service.get_company_info("VCI", info_type, "en")
 
                 assert result.success, f"Failed for info_type: {info_type}"
+
+    @pytest.mark.asyncio
+    async def test_company_uses_vci_source(self, company_service, sample_overview_df):
+        """Test Company is initialized with VCI for VCI-specific compatibility methods."""
+        mock_company = MagicMock()
+        mock_company.overview.return_value = sample_overview_df
+        mock_company_cls = MagicMock(return_value=mock_company)
+
+        with patch.dict("sys.modules", {"vnstock": MagicMock(Company=mock_company_cls)}):
+            await company_service.get_company_info("vci", "overview", "en")
+
+            mock_company_cls.assert_called_once_with(
+                source="VCI",
+                symbol="VCI",
+                show_log=False,
+            )

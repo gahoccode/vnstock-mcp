@@ -1,6 +1,9 @@
 prds/
 .claude/
 
+# Settings
+settings.json
+
 # Environment variables
 .env
 .env.*

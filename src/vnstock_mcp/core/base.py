@@ -1,8 +1,9 @@
 """Base service with async execution patterns."""
 
 import asyncio
+from collections.abc import Callable
 from concurrent.futures import Executor
-from typing import Callable, TypeVar
+from typing import TypeVar
 
 T = TypeVar("T")
 
