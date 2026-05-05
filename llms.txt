@@ -4,3 +4,4 @@ Breakdown Doc on Build Client guide: https://github.com/gahoccode/docs/blob/main
 vnstock Repository: https://github.com/thinh-vu/vnstock
 vnstock 4.x Release Notes: https://vnstocks.com/blog/phat-hanh-vnstock-the-he-4-0-giao-dien-hop-nhat
 vnstock Architecture Docs: https://vnstocks.com/docs/vnstock-data/kien-truc-thu-vien
+VNStock MCP Architecture and Health Docs: https://github.com/gahoccode/vnstock-mcp/blob/main/docs/ARCHITECTURE.md

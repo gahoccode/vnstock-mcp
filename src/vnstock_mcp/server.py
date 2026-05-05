@@ -4,12 +4,14 @@ Provides tools to fetch financial statements, company information, and fund data
 """
 
 from fastmcp import FastMCP
+from starlette.requests import Request
 from starlette.responses import JSONResponse
 
-from vnstock_mcp.config import PORT, SERVICE_NAME, USE_HTTP, VERSION
+from vnstock_mcp.config import PORT, SERVICE_NAME, USE_HTTP
 from vnstock_mcp.core.company import CompanyService
 from vnstock_mcp.core.financial import FinancialService
 from vnstock_mcp.core.fund import FundService
+from vnstock_mcp.version import get_runtime_version
 
 # Initialize the MCP server
 mcp = FastMCP(SERVICE_NAME)
@@ -21,13 +23,15 @@ fund_service = FundService()
 
 
 @mcp.custom_route("/health", methods=["GET"])
-async def health_check(_request):
-    """Health check endpoint for monitoring and load balancer health probes."""
-    return JSONResponse({
-        "status": "healthy",
-        "service": SERVICE_NAME,
-        "version": VERSION
-    })
+async def health_check(_request: Request) -> JSONResponse:
+    """Return server health and the current git-tag-derived version."""
+    return JSONResponse(
+        {
+            "status": "healthy",
+            "service": SERVICE_NAME,
+            "version": get_runtime_version(),
+        }
+    )
 
 
 # ========== Financial Analysis Tools ==========

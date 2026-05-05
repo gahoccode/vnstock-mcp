@@ -8,6 +8,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+- **Runtime version resolution** - `/health` now reports the current git tag when the repository is tagged, with fallbacks for packaged and containerized runtimes.
+  - `src/vnstock_mcp/version.py` - new runtime/package version helper
+  - `src/vnstock_mcp/server.py` - `/health` reads version dynamically
+  - `src/vnstock_mcp/__init__.py` - module `__version__` now derives from metadata helper
+  - `pyproject.toml` - package version aligned to current tag `v0.4.0`
+  - `uv.lock` - root package metadata aligned to the same release tag
+  - `docs/ARCHITECTURE.md`, `README.md`, `llms.txt` - documentation updated to describe dynamic version behavior
+
+```mermaid
+flowchart LR
+    Git["git tag at HEAD"] --> Health["/health.version"]
+    Env["VNSTOCK_MCP_VERSION"] --> Health
+    Meta["importlib.metadata('vnstock-mcp')"] --> Health
+```
+
 - **vnstock 4.x migration** - Updated the data layer from vnstock 3.x explorer imports to vnstock 4.x top-level adapters.
   - Financial tools now use `Finance(source="KBS")` for consistent statement and ratio output.
   - Financial tools no longer expose `lang` because vnstock 4.x KBS financial calls ignore language parameters; use `item_id` for stable metric identification.
@@ -22,6 +37,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Scope of Impact
 - **Modified files**:
+  - `src/vnstock_mcp/version.py`
+    - `get_git_tag()` - resolves exact HEAD tag from git
+    - `get_package_version()` - reads installed distribution metadata
+    - `get_runtime_version()` - health endpoint version resolution
+    - `get_distribution_version()` - package metadata version for `__version__`
+  - `src/vnstock_mcp/server.py`
+    - `health_check()` - returns dynamic runtime version
+  - `src/vnstock_mcp/__init__.py`
+    - `__version__` - now derived from version helper
+  - `src/vnstock_mcp/config.py`
+    - removed stale `VERSION` constant
+  - `pyproject.toml`
+    - `[project].version` - aligned with git tag `v0.4.0`
+  - `uv.lock`
+    - root package version aligned with `pyproject.toml`
+  - `docs/ARCHITECTURE.md`
+    - configuration table and runtime-version note
+  - `README.md`
+    - health endpoint note
+  - `llms.txt`
+    - architecture and health documentation link
   - `src/vnstock_mcp/core/financial.py`
     - `get_income_statement()` - top-level `Finance`, KBS source, removed `lang`, vnstock 4.x period-column ordering
     - `get_balance_sheet()` - top-level `Finance`, KBS source, removed `lang`, vnstock 4.x period-column ordering

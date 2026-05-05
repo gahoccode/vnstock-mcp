@@ -4,7 +4,6 @@ import os
 
 # Service metadata
 SERVICE_NAME = "vnstock"
-VERSION = "0.2.0"
 
 # Transport configuration
 # If PORT env var is set (e.g., by Render), use HTTP transport

@@ -190,6 +190,8 @@ You can verify the server is running with a custom health endpoint `/health` lik
 curl https://your-app.onrender.com/health
 ```
 
+When the service is running from a tagged git checkout, the `version` field in `/health` reports that tag. For packaged or deployed environments without `.git`, it falls back to the installed package metadata or `VNSTOCK_MCP_VERSION`.
+
 ## Development
 
 Setup the docker mcp gateway [Setup Guide](docs/setup-guide.md)

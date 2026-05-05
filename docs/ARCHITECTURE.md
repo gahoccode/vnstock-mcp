@@ -213,12 +213,13 @@ classDiagram
 | Constant | Value | Purpose |
 |----------|-------|---------|
 | `SERVICE_NAME` | `"vnstock"` | MCP server name |
-| `VERSION` | `"0.2.0"` | Server version |
 | `PORT` | env `PORT` or 8001 | HTTP port |
 | `USE_HTTP` | `PORT in os.environ` | Transport mode |
 | `VALID_LANGUAGES` | `{"en", "vi"}` | Valid language codes |
 | `VALID_INFO_TYPES` | 9 types | Valid company info types |
 | `VALID_FUND_TYPES` | `{"", "BALANCED", "BOND", "STOCK"}` | Valid fund types |
+
+The runtime version shown by `/health` is resolved dynamically from the current git tag, then `VNSTOCK_MCP_VERSION`, then installed package metadata.
 
 ---
 
